@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!-- LinkedIn feed graphic, 1080 x 1350. Edit the text in the marked spots, then run scripts/render.sh. -->
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="release.css">
+<style>
+  .frame { width: 1080px; height: 1350px; }
+  .row.r1 { top: 160px; transform: translateX(-60px); }
+  .row.r2 { top: 276px; transform: translateX(-140px); }
+  .row.r3 { top: 382px; transform: translateX(-20px); }
+  .top { position: absolute; left: 64px; right: 64px; top: 64px; display: flex; justify-content: space-between; align-items: center; }
+  .headline { position: absolute; left: 64px; top: 440px; width: 900px; font-size: 92px; }
+  .panel { left: 40px; right: 40px; top: 790px; bottom: 40px; padding: 48px; }
+  .panel .pill { margin-bottom: 28px; }
+  .sub { margin-top: 30px; font-size: 26px; line-height: 1.5; color: var(--ink-500); }
+</style></head>
+<body>
+<div class="frame">
+  <div class="field">
+    <div class="row r1"><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile scan"></div><div class="tile"></div><div class="tile"></div></div>
+    <div class="row r2"><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div></div>
+  </div>
+  <div class="veil"></div><div class="edge-top"></div>
+  <div class="top">
+    <img class="lockup" src="../brand/logos/verstack-lockup-white.svg" height="36" alt="Verstack">
+    <!-- EDIT: release label -->
+    <span class="label">Product update</span>
+  </div>
+  <!-- EDIT: the claim, sentence case, full stop, max ~8 words -->
+  <h1 class="headline">Repeat repairs get flagged first.</h1>
+  <div class="panel">
+    <!-- EDIT: status pill: live | rolling | pilot -->
+    <span class="pill live">Live</span>
+    <div class="card">
+      <!-- EDIT: product card -->
+      <div class="card-title">Dishwasher · Unit 214</div>
+      <div class="card-detail">Not draining · 2 work orders · last serviced 14 Mar 2025 by Marsh Appliance</div>
+      <span class="chip">Repeat repair</span>
+    </div>
+    <!-- EDIT: one line of outcome -->
+    <p class="sub">Verstack checks the unit's repair history and budget before anyone books a trade.</p>
+  </div>
+</div>
+</body></html>

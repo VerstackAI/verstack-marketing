@@ -1,0 +1,21 @@
+{
+  "PREHEADER": "Verstack now checks a unit's repair history before work starts.",
+  "RELEASE_DATE": "16 Nov 2026",
+  "HEADLINE": "Repeat repairs get flagged before anyone books a trade.",
+  "INTRO": "When the same appliance breaks twice, the second visit is usually the expensive one. Verstack now checks a unit's repair history and budget before work starts.",
+  "STATUS_LABEL": "Live",
+  "STATUS_BG": "#a5fc22",
+  "STATUS_COLOR": "#000000",
+  "CARD_TITLE": "Dishwasher &middot; Unit 214",
+  "CARD_DETAIL": "Not draining &middot; 2 work orders &middot; last serviced 14 Mar 2025 by Marsh Appliance",
+  "CARD_CHIP": "Repeat repair",
+  "STEP_1": "A resident reports that the dishwasher in Unit 214 isn't draining.",
+  "STEP_2": "Verstack finds two earlier work orders on the same appliance and flags a repeat repair.",
+  "STEP_3": "The manager sees the history and the unit budget beside the quote, then decides: repair or replace.",
+  "OUTCOME": "Fewer return visits for the same fault, and no surprises on a unit's budget.",
+  "CTA_LABEL": "Book a demo",
+  "CTA_URL": "https://cal.com/nathaniel-rudichuk-qmkbt8/30min",
+  "SIGNOFF": "Nate, founder of Verstack",
+  "COMPANY_ADDRESS": "Add mailing address before sending",
+  "RESEND_UNSUBSCRIBE_URL": "#"
+}
