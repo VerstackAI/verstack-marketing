@@ -137,6 +137,11 @@ class Drawing:
     def end(self):
         self.els.append("</g>")
 
+    def layer(self, name):
+        """An empty, named group at this point in the drawing order. Motion code puts things
+        here (the walk trail on the floor) so everything drawn after it hides them."""
+        self.els.append(f'<g id="layer-{name}" data-layer="{name}"></g>')
+
     def quad(self, pts, fill="bg", stroke="stroke"):
         """Any flat four-sided face given as 3D points (slanted parts)."""
         self.poly3(pts, fill, stroke)

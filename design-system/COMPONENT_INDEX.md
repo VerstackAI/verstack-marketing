@@ -21,7 +21,8 @@ Use these names exactly in briefs, reviews and changelog entries. Every motion c
 | Drawing | `Drawing(card, name, opts)` | A line drawing centred in its card, recoloured for the mode. Its SVG viewBox is the camera. Line weight from its size on screen, contour heaviest |
 | Lime Part | `Drawing(..., { lime: anchor })`, `d.part(anchor)`; `PART` in `src/clips.js` | The smallest closed shape under an anchor (a display, a burner ring, a dispenser), filled lime when highlighted; at most 20% of the drawing. Building, unit plan and phone carry their own |
 | Drawing Camera | `d.camera(s, focus, p)`, `d.look(cx, cy, s)` | Zoom and pan by viewBox; line weights stay fixed on screen at any zoom |
-| Tracer | `Tracer(drawing, route)` | The lime dot walking a route of anchors, with its trail |
+| Tracer | `Tracer(drawing, route)` | The lime dot walking a route of anchors, with its trail, placed in the drawing's floor layer so walls hide it |
+| Floor Layer | `d.layer("floor")` in `iso.py` | An empty group after the floor; what goes in it is hidden by everything drawn later |
 | Phone | `Phone(card, screen)` | A real mobile screen in its device shell, centred |
 | Push Screen | `PushScreen(phone, screen)` | The next screen sliding in; shell and status bar stay still |
 | Screen | `Screen(card, screen)` | A real desktop screen, centred, with a hairline edge; zooms toward one element without showing past its edge |

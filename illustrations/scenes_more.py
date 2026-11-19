@@ -171,23 +171,37 @@ def rooftop_unit(d):
 
 
 def ladder(d):
+    """A stepladder built as solids, drawn far to near so nearer parts hide farther ones:
+    back legs, their braces, the left front rail, the steps, the right front rail, the top."""
     H, yb_f, yt, yb_b = 10.0, 4.0, 2.0, 0.0
-    w, rail = 3.0, 0.22
+    w, rail, t = 3.0, 0.26, 0.5  # rail width across (x) and thickness front to back (y)
 
-    def strip(x, yb, ytop, zt=H):
-        d.quad([(x, yb, 0), (x + rail, yb, 0), (x + rail, ytop, zt), (x, ytop, zt)])
+    def rail_bar(x, yb, ytop, zt):
+        """A slanted rail from (yb, z=0) to (ytop, zt): its front face, its outer side, its top."""
+        lo = [(x, yb - t / 2, 0), (x + rail, yb - t / 2, 0), (x + rail, yb + t / 2, 0), (x, yb + t / 2, 0)]
+        hi = [(x, ytop - t / 2, zt), (x + rail, ytop - t / 2, zt), (x + rail, ytop + t / 2, zt), (x, ytop + t / 2, zt)]
+        d.quad([lo[3], lo[2], hi[2], hi[3]], "left")    # front face (y max)
+        d.quad([lo[1], lo[2], hi[2], hi[1]], "right")   # outer side (x max)
+        d.quad(hi, "top")                               # top end
+        d.outline(lo + hi)
 
-    strip(0, yb_b, yt - 0.1, H - 0.4)
-    strip(w - rail, yb_b, yt - 0.1, H - 0.4)
+    def rail_y(yb, ytop, zt, z):
+        return yb + (ytop - yb) * z / zt
+
+    # back legs and the braces between them
+    rail_bar(0, yb_b, yt - 0.35, H - 0.4)
+    rail_bar(w - rail, yb_b, yt - 0.35, H - 0.4)
     for z in (2.2, 4.6):
-        y = yb_b + (yt - yb_b) * z / H
+        y = rail_y(yb_b, yt - 0.35, H - 0.4, z)
         d.line3((rail, y, z), (w - rail, y, z), stroke="muted", sw=1)
+    # left front rail, then the steps (their right ends run into the right rail), then the right rail
+    rail_bar(0, yb_f, yt, H)
     for k in range(1, 5):
         z = k * 2.0
-        y = yb_f + (yt - yb_f) * z / H
-        d.box(rail, y - 0.25, z - 0.12, w - 2 * rail, 0.6, 0.12)
-    strip(0, yb_f, yt, H)
-    strip(w - rail, yb_f, yt, H)
+        y = rail_y(yb_f, yt, H, z)
+        d.box(rail, y - t / 2 + 0.04, z - 0.14, w - rail * 1.5, t - 0.08, 0.14)
+    rail_bar(w - rail, yb_f, yt, H)
+    # the top platform sits over all four rails
     d.box(-0.1, yt - 0.9, H, w + 0.2, 1.2, 0.35)
     d.anchor("top", (w / 2, yt - 0.3, H + 0.35))
 

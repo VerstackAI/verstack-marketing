@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-19, layering
+
+- The walk trail and its dot now sit in the unit plan's floor layer, so walls and furniture in front of them hide them. The rug and door swing moved below that layer.
+- The ladder is rebuilt as solids: rails are bars with thickness, steps run into the rails, parts drawn far to near so the right rail hides the step ends and the back legs sit behind.
+- New rule: nothing shows through a solid. 18 affected clips re-rendered; all pass.
+
 ## 2026-11-19, toned drawings, smaller lime parts
 
 - Drawings are now toned like the phone on verstack.ai: flat fills by the way each face turns (top lightest, left light grey, right darker, curved sides between) and a dark accent for glass and displays. New `tone-*` tokens with light and dark values; every element carries its role so clips recolour it for the mode.

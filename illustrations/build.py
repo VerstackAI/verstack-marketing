@@ -74,6 +74,13 @@ def unit_plan(d, hi=True):
         d.box(x - T / 2, y0, z0, T, y1 - y0, h)
 
     d.box(0, 0, -0.3, W, D, 0.3)
+    # Floor-level marks (rug, door swing), then the floor layer: the walk trail goes there,
+    # so every wall and piece of furniture drawn after it hides the trail behind it.
+    d.rect_on("z", 0.001, 6.2, 1.5, 10.0, 3.7, stroke="muted")
+    arc = [(3.55 + 1.0 * math.cos(math.radians(a)), D - 1.0 * math.sin(math.radians(a)), 0.002) for a in range(0, 91, 5)]
+    d.poly3(arc, close=False, stroke="muted", dash="3 4")
+    d.line3((3.55, D, 0.002), (3.55, D - 1.0, 0.002), stroke="muted")
+    d.layer("floor")
     # back walls, with a window in the living room
     wall_x(0, 6.6, 0)
     wall_x(6.6, 10.4, 0, h=0.62)
@@ -93,7 +100,6 @@ def unit_plan(d, hi=True):
         d.circle_on("z", (0.5, cy, 0.9), 0.22)
     d.box(2.2, 2.3, 0, 1.7, 1.0, 0.85)
     # living room: rug, sofa, coffee table
-    d.rect_on("z", 0.001, 6.2, 1.5, 10.0, 3.7, stroke="muted")
     d.box(6.45, 0.25, 0, 3.1, 0.95, 0.42)
     d.box(6.45, 0.25, 0.42, 3.1, 0.28, 0.38)
     d.box(6.2, 0.25, 0, 0.25, 0.95, 0.62)
@@ -109,10 +115,6 @@ def unit_plan(d, hi=True):
     d.cylinder_z(2.45, 5.25, 0.27, 0, 0.42)
     wall_y(4.5, 5.1, 3.0)
     wall_y(6.0, D, 3.0)
-    # hall: front door swing
-    arc = [(3.55 + 1.0 * math.cos(math.radians(a)), D - 1.0 * math.sin(math.radians(a)), 0.002) for a in range(0, 91, 5)]
-    d.poly3(arc, close=False, stroke="muted", dash="3 4")
-    d.line3((3.55, D, 0.002), (3.55, D - 1.0, 0.002), stroke="muted")
     wall_y(4.5, 5.3, 5.0)
     wall_y(6.2, D, 5.0)
     # bedroom: headboard, bed, pillows, side tables

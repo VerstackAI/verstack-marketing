@@ -15,21 +15,22 @@ These rules apply to every release email image, LinkedIn post, release video and
 9. Planned hardware stays private until announced.
 10. Drawings follow the isometric phone on verstack.ai: line weight proportional to the drawing's size, outer contour heavier than the lines inside it, and flat tones on the faces (top lightest, faces turned left light grey, faces turned right darker, curved sides between, a dark accent for glass and displays). Each mode has its own tone values (`tone-*` tokens). Never a uniform hairline, never an untoned outline drawing. Appliances have softly rounded corners; buildings and plans stay square.
 11. The phone is the website's phone (`illustrations/sources/phone-site.svg`). Never draw another.
+12. Things are solid and layered like real objects: nearer parts hide farther ones. Every part with thickness is drawn as a solid (a ladder rail is a bar, not a flat strip), drawn far to near, and anything that sits on a floor (the walk trail and its dot) goes in the drawing's floor layer so walls and furniture in front of it hide it. Nothing shows through a solid.
 
 ## Motion clips
 
-12. Clips are imagery only. No headlines, labels, callouts, captions, numbers or keys in a clip. The words go on in the video edit or in the post.
-13. Every drawing, phone, screen and part is centred both ways in its card. Nothing is pushed aside to make room for anything.
-14. Cards are on screen from the first frame, so clips cut together cleanly. The imagery moves; the frame does not.
-15. In dark mode the lime part's outline, and every line drawn on the part, turn dark as it lights, so its details stay visible.
-16. Every clip is code in `design-system/src/clips.js`, built from the components in `src/components.js`, and must pass `python3 design-system/scripts/verify.py`. No hand-made clip pages.
+13. Clips are imagery only. No headlines, labels, callouts, captions, numbers or keys in a clip. The words go on in the video edit or in the post.
+14. Every drawing, phone, screen and part is centred both ways in its card. Nothing is pushed aside to make room for anything.
+15. Cards are on screen from the first frame, so clips cut together cleanly. The imagery moves; the frame does not.
+16. In dark mode the lime part's outline, and every line drawn on the part, turn dark as it lights, so its details stay visible.
+17. Every clip is code in `design-system/src/clips.js`, built from the components in `src/components.js`, and must pass `python3 design-system/scripts/verify.py`. No hand-made clip pages.
 
 ## Still layouts (posts and email)
 
-17. Drawings and app screens sit on the light cards. Headlines sit on the dark.
-18. Nothing under 28 px at full size. If a line only works small, cut it.
-19. Headlines fill their space: sized to the column, two to four balanced lines. Under the headline goes a real app part or one supporting line, never an empty band.
-20. Two callouts at most. A callout is bold pop-up text: name 40 px weight 600, one 28 px line under it, a plain leader line, no node.
+18. Drawings and app screens sit on the light cards. Headlines sit on the dark.
+19. Nothing under 28 px at full size. If a line only works small, cut it.
+20. Headlines fill their space: sized to the column, two to four balanced lines. Under the headline goes a real app part or one supporting line, never an empty band.
+21. Two callouts at most. A callout is bold pop-up text: name 40 px weight 600, one 28 px line under it, a plain leader line, no node.
 
 ## Do not use
 

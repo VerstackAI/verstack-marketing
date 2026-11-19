@@ -303,7 +303,8 @@ VS.base = VS.base || "../";
   }
 
   /** A lime dot that travels a route on a drawing (the trace move). Lives in the drawing's
-      SVG so the camera moves it too; its size stays fixed on screen. */
+      SVG (in its floor layer when it has one) so the camera moves it and walls hide it;
+      its size stays fixed on screen. */
   function Tracer(d, route) {
     const NS = "http://www.w3.org/2000/svg";
     const pts = route.map((n) => d.anchor(n));
@@ -316,7 +317,10 @@ VS.base = VS.base || "../";
     dot.classList.add("vs-dot");
     dot.setAttribute("fill", LIME); dot.setAttribute("stroke", d.theme.dot); dot.setAttribute("stroke-width", "2");
     dot.setAttribute("vector-effect", "non-scaling-stroke");
-    d.svg.appendChild(trail); d.svg.appendChild(dot);
+    // WHY: the trail and dot sit on the floor, so they go in the drawing's floor layer: every
+    // wall and piece of furniture drawn after it hides the part of the walk behind it.
+    const host = d.svg.querySelector('[data-layer="floor"]') || d.svg;
+    host.appendChild(trail); host.appendChild(dot);
     const total = trail.getTotalLength();
     return {
       trail, dot, total,
