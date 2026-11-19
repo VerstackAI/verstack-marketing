@@ -13,7 +13,13 @@ import subprocess
 import sys
 import tempfile
 
+import os
+import shutil
+
 from playwright.sync_api import sync_playwright
+
+# A local Chrome if there is one (set CHROME to choose), else Playwright's own Chromium.
+CHROME = os.environ.get("CHROME") or shutil.which("google-chrome") or shutil.which("chromium")
 
 ROOT = pathlib.Path(__file__).resolve().parent
 OUT = ROOT / "out"
@@ -31,7 +37,7 @@ def render(page, name, stills=None):
             page.evaluate(f"renderAt({t})")
             page.screenshot(path=str(OUT / f"{name}-t{t}.png"))
         return
-    tmp = pathlib.Path(tempfile.mkdtemp(dir="/home/claude"))
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="vs-frames-"))
     frames = int(round((duration + HOLD) * FPS))
     for i in range(frames):
         page.evaluate(f"renderAt({min(i / FPS, duration)})")
@@ -50,9 +56,9 @@ def main():
         i = args.index("--stills")
         stills = [float(x) for x in args[i + 1:]]
         args = args[:i]
-    names = args or ["draw-highlight", "explode", "capture-walk", "callouts", "asset-tiles"]
+    names = args or ["draw-highlight", "explode", "capture-walk", "callouts", "asset-tiles", "app-decide", "app-field-home", "app-board", "app-report"]
     with sync_playwright() as p:
-        browser = p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--allow-file-access-from-files"])
+        browser = p.chromium.launch(**({"executable_path": CHROME} if CHROME else {}), args=["--allow-file-access-from-files"])
         page = browser.new_page(viewport={"width": 1920, "height": 1080})
         page.on("pageerror", lambda e: print("page error:", e))
         for name in names:

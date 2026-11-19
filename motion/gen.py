@@ -77,6 +77,36 @@ def popup(pid, x, y, name, sub, width=360):
             f'<div style="font-size:28px; line-height:1.25; margin-top:10px; color:var(--ink-500)">{sub}</div></div>')
 
 
+PUI = json.loads((ROOT / "product-ui" / "anchors.json").read_text())
+
+
+def app_part(pid, src, x, y, w, crop_h=None, radius=24):
+    """A real app part (PNG from product-ui/) on the dark, as a light card. crop_h cuts its bottom."""
+    h = f"height:{crop_h}px; " if crop_h else ""
+    return (f'<div id="{pid}" class="abs hide" style="left:{x}px; top:{y}px; width:{w}px; {h}overflow:hidden; border-radius:{radius}px; background:#fff">'
+            f'<img src="../product-ui/{src}" style="display:block; width:{w}px" alt=""></div>')
+
+
+def phone(pid, screen, x, y, h):
+    """A real mobile screen (with its device shell) from product-ui/mobile/screens/. Returns html, scale, box(name)."""
+    sw, sh = PUI["mobile"][screen]["size"]
+    k = h / sh
+    # WHY: the capture is the device shell's bounding box; rounding hides the canvas behind its corners.
+    html = f'<img id="{pid}" class="abs hide" src="../product-ui/mobile/screens/{screen}.png" style="left:{x}px; top:{y}px; height:{h}px; border-radius:{60 * k:.0f}px" alt="">'
+
+    def box(name):
+        bx, by, bw, bh = PUI["mobile"][screen]["boxes"][name]
+        return x + bx * k, y + by * k, bw * k, bh * k
+    return html, k, box
+
+
+def ring(rid, box, pad=8, radius=14):
+    """The frame's one lime element: a ring around a real UI element."""
+    x, y, w, h = box
+    return (f'<div id="{rid}" class="abs ring" style="left:{x - pad:.0f}px; top:{y - pad:.0f}px; width:{w + 2 * pad:.0f}px; height:{h + 2 * pad:.0f}px; '
+            f'border-radius:{radius}px"></div>')
+
+
 def fit_js(hid, maxpx, minpx, maxh):
     return f'fitText(document.getElementById("{hid}"), {maxpx}, {minpx}, {maxh});'
 
@@ -95,6 +125,7 @@ def page(title, duration, body, script):
   background: linear-gradient(90deg, #f8fafc 0%, #eefbd7 12%, #d8f7a3 26%, #baf85d 42%, #a5fc22 58%, #8ff741 74%, #7ff553 100%);
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.15) 7%, #000 22%, #000 78%, rgba(0,0,0,.15) 93%, transparent 100%); }}
 .leader {{ fill: none; stroke: {INK}; stroke-width: 1.5; }}
+.ring {{ border: 4px solid {LIME}; box-shadow: inset 0 0 0 1.5px {INK}; opacity: 0; }}
 </style></head>
 <body><div class="frame">
 {body}
@@ -127,25 +158,25 @@ def draw_highlight():
         card(CX, CY, CW, CH, "card"),
         inline("building", "light", box, "d"),
         f'<svg class="leaders" width="{W}" height="{H}"><polyline id="ld" class="leader" points="{ux},{uy} {lx - 24},{uy}"/></svg>',
-        popup("t3", lx, uy - 26, "Unit 214", "Ready by 1 Sep", width=230),
+        popup("t3", lx, uy - 26, "Unit 203", "Needs review", width=230),
         sweep_layer(CX, CY, CW, CH, "sw"),
+        lockup(CX + 56, 984, color="black"),
         headline("t2", "Every unit, on one record."),
-        support("t4", "Work orders, quotes and inspections land on the unit they belong to.", 560),
-        lockup(RX, 950),
+        app_part("p1", "mobile/parts/record-details.png", RX, 0, RW, crop_h=538),
     ])
     script = f"""
 let items;
-function setup() {{ items = prepDraw(document.getElementById("d")); {fit_js("t2", 170, 60, 480)} above("t4", 950, 56); }}
+function setup() {{ items = prepDraw(document.getElementById("d")); {fit_js("t2", 170, 60, 330)} below("p1", "t2", 44); }}
 function renderAt(t) {{
   enter(document.getElementById("card"), t, 0, 0.5, 0);
   sweep(document.getElementById("sw"), t, 0.25, 1.7);
   enter(document.getElementById("t2"), t, 0.4);
   drawAt(items, t, 0.5, 2.2, 0.7, "#f8fafc", 3.4);
   leaderAt(document.getElementById("ld"), t, 3.8);
+  enter(document.getElementById("p1"), t, 1.0, 0.6, 24);
   enter(document.getElementById("t3"), t, 4.0, 0.48, 8);
-  enter(document.getElementById("t4"), t, 4.6);
 }}"""
-    return page("Draw and highlight", 6.6, body, script)
+    return page("Draw and highlight", 6.4, body, script)
 
 
 # B. Explode -----------------------------------------------------------------------
@@ -158,9 +189,10 @@ def explode():
         inline("building-floors", "light", box, "d"),
         f'<svg class="leaders" width="{W}" height="{H}"><polyline id="ld" class="leader" points="{ux},{uy} {lx - 24},{uy}"/></svg>',
         popup("t3", lx, uy - 26, "Floor 3", "2 open jobs", width=230),
+        lockup(CX + 56, 984, color="black"),
         headline("t2", "Open any floor."),
-        support("t4", "Every floor and unit keeps its own history.", 520),
-        lockup(RX, 950),
+        app_part("p1", "desktop/parts/location-card.png", RX, 0, RW),
+        support("t4", "Every floor and unit keeps its own history.", 0),
     ])
     script = f"""
 let items, floors, roof, ld, t3;
@@ -170,7 +202,7 @@ function setup() {{
   floors = [0, 1, 2, 3, 4].map((k) => document.getElementById("floor-" + k));
   roof = document.getElementById("roof");
   ld = document.getElementById("ld"); t3 = document.getElementById("t3");
-  {fit_js("t2", 170, 60, 400)} above("t4", 950, 56);
+  {fit_js("t2", 170, 60, 300)} below("p1", "t2", 44); below("t4", "p1", 36);
 }}
 function amount(t, k) {{
   const out = ease(prog(t, 1.3 + (5 - k) * 0.08, 0.64));
@@ -192,7 +224,8 @@ function renderAt(t) {{
   enter(t3, t, 3.1, 0.48, 8);
   if (t >= 4.6) t3.style.opacity = 1 - prog(t, 4.6, 0.3);
   t3.style.top = (y - 26) + "px";
-  enter(document.getElementById("t4"), t, 3.4);
+  enter(document.getElementById("p1"), t, 0.9, 0.6, 24);
+  enter(document.getElementById("t4"), t, 1.3);
 }}"""
     return page("Explode", 6.6, body, script)
 
@@ -323,12 +356,170 @@ function renderAt(t) {{
     return page("Asset tiles", 5.0, body, script)
 
 
+# F. App: decide from the phone (screen push) ----------------------------------------
+def app_decide():
+    ph1, k, box1 = phone("ph1", "manager-work", CX + 130, CY + 54, 940)
+    _, _, box2 = phone("ph2x", "work-order", CX + 130, CY + 54, 940)
+    sx, sy, sw_, sh_ = CX + 130 + 14 * k, CY + 54 + 14 * k, 393 * k, 852 * k
+    bx, by, bw, bh = box1("water-heater")
+    qx, qy, qw, qh = box2("quote")
+    tx = CX + 130 + 421 * k + 70
+    tw = CX + CW - tx - 50
+    body = "\n".join([
+        card(CX, CY, CW, CH, "card"),
+        ph1,
+        # WHY: the incoming screen slides inside its own screen-sized clip, so its device shell never shows.
+        f'<div class="abs" style="left:{sx:.0f}px; top:{sy:.0f}px; width:{sw_:.0f}px; height:{sh_:.0f}px; overflow:hidden; border-radius:{46 * k:.0f}px">'
+        f'<div id="ph2" style="position:absolute; inset:0; overflow:hidden; opacity:0">'
+        f'<img src="../product-ui/mobile/screens/work-order.png" style="position:absolute; left:{-14 * k:.0f}px; top:{-14 * k:.0f}px; height:940px" alt=""></div></div>',
+        ring("r1", box1("water-heater")),
+        ring("r2", box2("quote")),
+        popup("c1", tx, by - 10, "Owner asked", "Leaking water heater, Unit 4B", width=tw),
+        popup("c2", tx, qy - 10, "Decide the quote", "From the job, in one tap", width=tw),
+        lockup(CX + CW - 226, 984, color="black"),
+        headline("t1", "Decide quotes from anywhere."),
+        support("t2", "Requests that need an owner or manager wait in one list on their phone.", 0),
+    ])
+    script = f"""
+function setup() {{ {fit_js("t1", 170, 60, 520)} below("t2", "t1", 40); }}
+function renderAt(t) {{
+  enter(document.getElementById("card"), t, 0, 0.5, 0);
+  enter(document.getElementById("t1"), t, 0.3);
+  enter(document.getElementById("t2"), t, 0.7);
+  enter(document.getElementById("ph1"), t, 0.4, 0.7, 40);
+  const r1 = document.getElementById("r1"), r2 = document.getElementById("r2"), c1 = document.getElementById("c1");
+  r1.style.opacity = prog(t, 1.6, 0.3) * (1 - prog(t, 3.6, 0.2));
+  enter(c1, t, 1.8, 0.48, 8);
+  if (t >= 3.6) c1.style.opacity = 1 - prog(t, 3.6, 0.25);
+  const push = ease(prog(t, 3.8, 0.55));
+  const p2 = document.getElementById("ph2");
+  p2.style.opacity = t >= 3.8 ? 1 : 0;
+  p2.style.transform = `translateX(${{(1 - push) * {sw_:.0f}}}px)`;
+  r2.style.opacity = prog(t, 4.7, 0.3);
+  enter(document.getElementById("c2"), t, 4.9, 0.48, 8);
+}}"""
+    return page("Decide from the phone", 7.0, body, script)
+
+
+# G. App: the day's work on the phone --------------------------------------------------
+def app_field_home():
+    ph, k, box = phone("ph1", "field-home", CX + 130, CY + 54, 940)
+    bx, by, bw, bh = box("waiting")
+    tx = CX + 130 + 421 * k + 70
+    body = "\n".join([
+        card(CX, CY, CW, CH, "card"),
+        ph,
+        ring("r1", box("waiting")),
+        popup("c1", tx, by - 10, "Ready to start", "Unit 4B, Maple Court", width=CX + CW - tx - 50),
+        lockup(CX + CW - 226, 984, color="black"),
+        headline("t1", "The day&#8217;s work, in one list."),
+        app_part("p1", "mobile/parts/record-summary.png", RX, 0, RW),
+        support("t2", "Inspections, uploads and comments that need you, first thing.", 0),
+    ])
+    script = f"""
+function setup() {{ {fit_js("t1", 170, 60, 420)} below("p1", "t1", 44); below("t2", "p1", 36); }}
+function renderAt(t) {{
+  enter(document.getElementById("card"), t, 0, 0.5, 0);
+  enter(document.getElementById("t1"), t, 0.3);
+  enter(document.getElementById("ph1"), t, 0.4, 0.7, 40);
+  enter(document.getElementById("p1"), t, 1.0, 0.6, 24);
+  enter(document.getElementById("t2"), t, 1.4);
+  document.getElementById("r1").style.opacity = prog(t, 2.4, 0.3);
+  enter(document.getElementById("c1"), t, 2.6, 0.48, 8);
+}}"""
+    return page("Field home", 5.6, body, script)
+
+
+# H. App: the maintenance board on desktop ---------------------------------------------
+def app_board():
+    bw_ = CW - 80
+    k0 = bw_ / 1440
+    bh_ = round(900 * k0)
+    bx0, by0 = CX + 40, CY + 40
+    lx, ly, lw, lh = PUI["desktop"]["maintenance-board"]["boxes"]["leak"]
+    body = "\n".join([
+        card(CX, CY, CW, CH, "card"),
+        f'<div id="b1" class="abs hide" style="left:{bx0}px; top:{by0}px; width:{bw_}px; height:{bh_}px; overflow:hidden; border-radius:18px; border:1px solid #e2e8f0">'
+        f'<img id="bimg" src="../product-ui/desktop/screens/maintenance-board.png" style="position:absolute; left:0; top:0; width:1440px; transform-origin:0 0" alt=""></div>',
+        '<div id="r1" class="abs ring" style="border-radius:12px"></div>',
+        popup("c1", CX + 56, by0 + bh_ + 56, "Active leak", "Kitchen faucet at King West 1708, flagged before a trade is booked.", width=CW - 112),
+        lockup(CX + 56, 984, color="black"),
+        headline("t1", "Every work order on one board."),
+        app_part("p1", "desktop/parts/work-order-card-leak.png", RX, 0, RW),
+    ])
+    script = f"""
+const BW = {bw_}, BH = {bh_}, BX = {bx0}, BY = {by0}, K0 = {k0:.4f}, K1 = 1.45;
+const L = [{lx}, {ly}, {lw}, {lh}];
+function setup() {{ {fit_js("t1", 170, 60, 460)} below("p1", "t1", 44); }}
+function board(t) {{
+  // WHY: the full board at legible size is too small, so the camera moves in on the one card.
+  const z = ease(prog(t, 1.4, 1.6));
+  const s = K0 + (K1 - K0) * z;
+  const fx = 720 + (L[0] + L[2] / 2 - 720) * z, fy = 450 + (L[1] + L[3] / 2 - 450) * z;
+  let tx = BW / 2 - fx * s, ty = BH / 2 - fy * s;
+  tx = Math.min(0, Math.max(BW - 1440 * s, tx)); ty = Math.min(0, Math.max(BH - 900 * s, ty));
+  document.getElementById("bimg").style.transform = `translate(${{tx}}px, ${{ty}}px) scale(${{s}})`;
+  const r = document.getElementById("r1"), pad = 6;
+  r.style.left = (BX + tx + L[0] * s - pad) + "px"; r.style.top = (BY + ty + L[1] * s - pad) + "px";
+  r.style.width = (L[2] * s + 2 * pad) + "px"; r.style.height = (L[3] * s + 2 * pad) + "px";
+  r.style.opacity = prog(t, 3.2, 0.3);
+}}
+function renderAt(t) {{
+  enter(document.getElementById("card"), t, 0, 0.5, 0);
+  enter(document.getElementById("t1"), t, 0.3);
+  enter(document.getElementById("b1"), t, 0.4, 0.7, 30);
+  board(t);
+  enter(document.getElementById("c1"), t, 3.4, 0.48, 8);
+  enter(document.getElementById("p1"), t, 4.0, 0.6, 24);
+}}"""
+    return page("Maintenance board", 6.4, body, script)
+
+
+# I. App: a report ready to review ------------------------------------------------------
+def app_report():
+    ph, k, box = phone("ph1", "report", CX + 130, CY + 54, 940)
+    sx, sy, sw_, sh_ = box("status")
+    dx, dy, dw, dh = box("to-decide")
+    tx = CX + 130 + 421 * k + 70
+    tw = CX + CW - tx - 50
+    body = "\n".join([
+        card(CX, CY, CW, CH, "card"),
+        ph,
+        ring("r1", box("status"), pad=7, radius=20),
+        ring("r2", box("to-decide"), pad=7, radius=14),
+        popup("c1", tx, sy - 30, "Needs review", "Set when the walk is processed", width=tw),
+        popup("c2", tx, dy - 20, "2 to decide", "Only the calls a person has to make", width=tw),
+        lockup(CX + CW - 226, 984, color="black"),
+        headline("t1", "Reports arrive ready to review."),
+        app_part("p1", "mobile/parts/record-summary.png", RX, 0, RW),
+    ])
+    script = f"""
+function setup() {{ {fit_js("t1", 170, 60, 460)} below("p1", "t1", 44); }}
+function renderAt(t) {{
+  enter(document.getElementById("card"), t, 0, 0.5, 0);
+  enter(document.getElementById("t1"), t, 0.3);
+  enter(document.getElementById("ph1"), t, 0.4, 0.7, 40);
+  enter(document.getElementById("p1"), t, 1.0, 0.6, 24);
+  const r1 = document.getElementById("r1"), r2 = document.getElementById("r2"), c1 = document.getElementById("c1");
+  r1.style.opacity = prog(t, 1.8, 0.3) * (1 - prog(t, 3.6, 0.2));
+  enter(c1, t, 2.0, 0.48, 8);
+  if (t >= 3.6) c1.style.opacity = 1 - prog(t, 3.6, 0.25);
+  r2.style.opacity = prog(t, 3.9, 0.3);
+  enter(document.getElementById("c2"), t, 4.1, 0.48, 8);
+}}"""
+    return page("Report ready", 6.2, body, script)
+
+
 CLIPS = {
     "draw-highlight": draw_highlight,
     "explode": explode,
     "capture-walk": capture_walk,
     "callouts": callouts,
     "asset-tiles": asset_tiles,
+    "app-decide": app_decide,
+    "app-field-home": app_field_home,
+    "app-board": app_board,
+    "app-report": app_report,
 }
 for name, fn in CLIPS.items():
     (OUT / f"{name}.html").write_text(fn())

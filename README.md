@@ -20,9 +20,11 @@ For example, the white lockup for an email header:
 | Folder | What |
 | --- | --- |
 | `brand/` | Logos (SVG and PNG), fonts (Inter and IBM Plex Sans, with licences) and `tokens.json` |
+| `design-system/` | The rules and canonical names (`RULES.md`, `COMPONENT_INDEX.md`, `DESIGN_SYSTEM.md`, `CHANGELOG.md`, `AGENT_CONTEXT.md`), in the same shape as the app's design systems |
+| `product-ui/` | Real app screens and parts captured from the running apps (`capture.py`), with `anchors.json` |
 | `illustrations/` | The isometric line drawings (`svg/`, 21 subjects, dark and light), the small engine that draws them (`iso.py`, `build.py`, `scenes_more.py`) and `anchors.json`, the points leader lines attach to |
-| `motion/` | Example video clips (`out/*.mp4`, 1920 x 1080), the HTML pages they are rendered from, and `render.py`, which turns a page into an MP4 |
-| `templates/` | Layouts built from the drawings: spec sheet and data plate (LinkedIn, 1080 x 1350), annotated drawing (1920 x 1080), email hero (1104 x 552), link preview (1200 x 630). `gen.py` places the drawings and leader lines |
+| `motion/` | Video clips (`out/*.mp4`, 1920 x 1080): five drawing clips and four app clips, the HTML pages they are rendered from, and `render.py`, which turns a page into an MP4 |
+| `templates/` | Still layouts: spec sheet and data plate (LinkedIn, 1080 x 1350), annotated drawing (1920 x 1080), email hero (1104 x 552), link preview (1200 x 630), product phone (1080 x 1350), product desktop (1920 x 1080). `gen.py` places drawings, app UI and leader lines |
 | `email/` | Source of the Resend template `verstack-product-update`, plus sample values |
 | `releases/` | One folder per release, holding its rendered images |
 | `scripts/render.sh` | Turns a template into a PNG with headless Chrome |
@@ -44,3 +46,17 @@ New clip? Add a function to `motion/gen.py`, run it, then `python3 motion/render
 `releases/_sample/` shows what each template produces with sample copy taken from verstack.ai.
 
 Unannounced work never goes in this repo. `build.py` and `gen.py` can load extra scenes from a private folder passed on the command line, and write their output there.
+
+## Build
+
+Needs Python 3 with `pip install -r requirements.txt`, then `python3 -m playwright install chromium` (or a local Google Chrome), and ffmpeg for video.
+
+```
+python3 illustrations/build.py          # drawings and illustrations/anchors.json
+python3 product-ui/capture.py           # app UI (needs the web app in mock mode and the design canvas running; see the file)
+python3 templates/gen.py                # still layouts
+python3 motion/gen.py                   # clip pages
+python3 motion/render.py                # all clips to motion/out/*.mp4
+```
+
+Read `design-system/RULES.md` before making anything new.

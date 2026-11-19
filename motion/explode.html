@@ -11,6 +11,7 @@
   background: linear-gradient(90deg, #f8fafc 0%, #eefbd7 12%, #d8f7a3 26%, #baf85d 42%, #a5fc22 58%, #8ff741 74%, #7ff553 100%);
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.15) 7%, #000 22%, #000 78%, rgba(0,0,0,.15) 93%, transparent 100%); }
 .leader { fill: none; stroke: #30303a; stroke-width: 1.5; }
+.ring { border: 4px solid #a5fc22; box-shadow: inset 0 0 0 1.5px #30303a; opacity: 0; }
 </style></head>
 <body><div class="frame">
 <div id="card" class="card" style="left:16px; top:16px; width:1110px; height:1048px; border-radius:40px"></div>
@@ -122,9 +123,10 @@
 </svg>
 <svg class="leaders" width="1920" height="1080"><polyline id="ld" class="leader" points="554.0,739.9 852,739.9"/></svg>
 <div id="t3" class="abs hide" style="left:876px; top:713.9px; width:230px; color:var(--ink-700)"><div style="font-size:40px; line-height:1.05; font-weight:600; letter-spacing:-0.03em">Floor 3</div><div style="font-size:28px; line-height:1.25; margin-top:10px; color:var(--ink-500)">2 open jobs</div></div>
+<img class="abs" src="../brand/logos/verstack-lockup-black.svg" style="left:72px; top:984px; height:34px" alt="Verstack">
 <h1 id="t2" class="abs hide fit" style="left:1206px; top:96px; width:600px; line-height:0.98; text-wrap:balance; letter-spacing:-0.05em; font-weight:400; color:var(--mist)">Open any floor.</h1>
-<p id="t4" class="abs hide" style="left:1206px; top:520px; width:600px; font-size:34px; line-height:1.28; letter-spacing:-0.015em; color:var(--fg-muted)">Every floor and unit keeps its own history.</p>
-<img class="abs" src="../brand/logos/verstack-lockup-white.svg" style="left:1206px; top:950px; height:34px" alt="Verstack">
+<div id="p1" class="abs hide" style="left:1206px; top:0px; width:600px; overflow:hidden; border-radius:24px; background:#fff"><img src="../product-ui/desktop/parts/location-card.png" style="display:block; width:600px" alt=""></div>
+<p id="t4" class="abs hide" style="left:1206px; top:0px; width:600px; font-size:34px; line-height:1.28; letter-spacing:-0.015em; color:var(--fg-muted)">Every floor and unit keeps its own history.</p>
 </div>
 <script>
 window.DURATION = 6.6;
@@ -136,7 +138,7 @@ function setup() {
   floors = [0, 1, 2, 3, 4].map((k) => document.getElementById("floor-" + k));
   roof = document.getElementById("roof");
   ld = document.getElementById("ld"); t3 = document.getElementById("t3");
-  fitText(document.getElementById("t2"), 170, 60, 400); above("t4", 950, 56);
+  fitText(document.getElementById("t2"), 170, 60, 300); below("p1", "t2", 44); below("t4", "p1", 36);
 }
 function amount(t, k) {
   const out = ease(prog(t, 1.3 + (5 - k) * 0.08, 0.64));
@@ -158,7 +160,8 @@ function renderAt(t) {
   enter(t3, t, 3.1, 0.48, 8);
   if (t >= 4.6) t3.style.opacity = 1 - prog(t, 4.6, 0.3);
   t3.style.top = (y - 26) + "px";
-  enter(document.getElementById("t4"), t, 3.4);
+  enter(document.getElementById("p1"), t, 0.9, 0.6, 24);
+  enter(document.getElementById("t4"), t, 1.3);
 }
 window.addEventListener("load", () => {
   document.fonts.ready.then(() => {

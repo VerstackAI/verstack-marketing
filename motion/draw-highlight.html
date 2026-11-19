@@ -11,6 +11,7 @@
   background: linear-gradient(90deg, #f8fafc 0%, #eefbd7 12%, #d8f7a3 26%, #baf85d 42%, #a5fc22 58%, #8ff741 74%, #7ff553 100%);
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.15) 7%, #000 22%, #000 78%, rgba(0,0,0,.15) 93%, transparent 100%); }
 .leader { fill: none; stroke: #30303a; stroke-width: 1.5; }
+.ring { border: 4px solid #a5fc22; box-shadow: inset 0 0 0 1.5px #30303a; opacity: 0; }
 </style></head>
 <body><div class="frame">
 <div id="card" class="card" style="left:16px; top:16px; width:1110px; height:1048px; border-radius:40px"></div>
@@ -107,25 +108,25 @@
 <polygon points="173.72,-8.50 195.81,4.25 195.81,-28.05 173.72,-40.80" fill="none" stroke="#30303a" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
 </svg>
 <svg class="leaders" width="1920" height="1080"><polyline id="ld" class="leader" points="583.7,705.1 852,705.1"/></svg>
-<div id="t3" class="abs hide" style="left:876px; top:679.1px; width:230px; color:var(--ink-700)"><div style="font-size:40px; line-height:1.05; font-weight:600; letter-spacing:-0.03em">Unit 214</div><div style="font-size:28px; line-height:1.25; margin-top:10px; color:var(--ink-500)">Ready by 1 Sep</div></div>
+<div id="t3" class="abs hide" style="left:876px; top:679.1px; width:230px; color:var(--ink-700)"><div style="font-size:40px; line-height:1.05; font-weight:600; letter-spacing:-0.03em">Unit 203</div><div style="font-size:28px; line-height:1.25; margin-top:10px; color:var(--ink-500)">Needs review</div></div>
 <div class="sweep-clip" style="left:16px; top:16px; width:1110px; height:1048px; border-radius:40px"><div id="sw" class="sweep"></div></div>
+<img class="abs" src="../brand/logos/verstack-lockup-black.svg" style="left:72px; top:984px; height:34px" alt="Verstack">
 <h1 id="t2" class="abs hide fit" style="left:1206px; top:96px; width:600px; line-height:0.98; text-wrap:balance; letter-spacing:-0.05em; font-weight:400; color:var(--mist)">Every unit, on one record.</h1>
-<p id="t4" class="abs hide" style="left:1206px; top:560px; width:600px; font-size:34px; line-height:1.28; letter-spacing:-0.015em; color:var(--fg-muted)">Work orders, quotes and inspections land on the unit they belong to.</p>
-<img class="abs" src="../brand/logos/verstack-lockup-white.svg" style="left:1206px; top:950px; height:34px" alt="Verstack">
+<div id="p1" class="abs hide" style="left:1206px; top:0px; width:600px; height:538px; overflow:hidden; border-radius:24px; background:#fff"><img src="../product-ui/mobile/parts/record-details.png" style="display:block; width:600px" alt=""></div>
 </div>
 <script>
-window.DURATION = 6.6;
+window.DURATION = 6.4;
 
 let items;
-function setup() { items = prepDraw(document.getElementById("d")); fitText(document.getElementById("t2"), 170, 60, 480); above("t4", 950, 56); }
+function setup() { items = prepDraw(document.getElementById("d")); fitText(document.getElementById("t2"), 170, 60, 330); below("p1", "t2", 44); }
 function renderAt(t) {
   enter(document.getElementById("card"), t, 0, 0.5, 0);
   sweep(document.getElementById("sw"), t, 0.25, 1.7);
   enter(document.getElementById("t2"), t, 0.4);
   drawAt(items, t, 0.5, 2.2, 0.7, "#f8fafc", 3.4);
   leaderAt(document.getElementById("ld"), t, 3.8);
+  enter(document.getElementById("p1"), t, 1.0, 0.6, 24);
   enter(document.getElementById("t3"), t, 4.0, 0.48, 8);
-  enter(document.getElementById("t4"), t, 4.6);
 }
 window.addEventListener("load", () => {
   document.fonts.ready.then(() => {

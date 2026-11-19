@@ -1,0 +1,171 @@
+{
+ "mobile": {
+  "field-home": {
+   "size": [
+    421,
+    880
+   ],
+   "scale": 3,
+   "boxes": {
+    "needs-you": [
+     14,
+     69,
+     393,
+     797
+    ],
+    "waiting": [
+     31,
+     422,
+     359,
+     62
+    ]
+   }
+  },
+  "manager-work": {
+   "size": [
+    421,
+    880
+   ],
+   "scale": 3,
+   "boxes": {
+    "water-heater": [
+     31,
+     186,
+     359,
+     62
+    ],
+    "decision-tab": [
+     30,
+     129,
+     361,
+     44
+    ]
+   }
+  },
+  "work-order": {
+   "size": [
+    421,
+    880
+   ],
+   "scale": 3,
+   "boxes": {
+    "quote": [
+     31,
+     167,
+     359,
+     52
+    ],
+    "title": [
+     14,
+     69,
+     393,
+     797
+    ]
+   }
+  },
+  "report": {
+   "size": [
+    421,
+    880
+   ],
+   "scale": 3,
+   "boxes": {
+    "status": [
+     279,
+     490,
+     95,
+     23
+    ],
+    "to-decide": [
+     269,
+     709,
+     105,
+     46
+    ]
+   }
+  },
+  "manager-home": {
+   "size": [
+    421,
+    880
+   ],
+   "scale": 3,
+   "boxes": {
+    "urgent": [
+     216,
+     279,
+     175,
+     96
+    ]
+   }
+  },
+  "inspections": {
+   "size": [
+    421,
+    880
+   ],
+   "scale": 3,
+   "boxes": {
+    "first": [
+     31,
+     230,
+     359,
+     62
+    ]
+   }
+  }
+ },
+ "desktop": {
+  "maintenance-board": {
+   "size": [
+    1440,
+    900
+   ],
+   "scale": 2,
+   "boxes": {
+    "leak": [
+     117,
+     411,
+     270,
+     149
+    ],
+    "new": [
+     1168,
+     36,
+     160,
+     40
+    ]
+   }
+  },
+  "reports": {
+   "size": [
+    1440,
+    900
+   ],
+   "scale": 2,
+   "boxes": {
+    "blocker": [
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  "locations": {
+   "size": [
+    1440,
+    900
+   ],
+   "scale": 2,
+   "boxes": {
+    "first": [
+     108,
+     189,
+     315,
+     214
+    ]
+   }
+  }
+ }
+}

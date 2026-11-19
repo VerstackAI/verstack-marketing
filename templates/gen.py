@@ -155,11 +155,62 @@ def link_preview():
     return page(W, H, "\n".join(parts), "var(--ground-900)")
 
 
+
+# 6. Product shot, phone, 1080 x 1350: a real app screen on a light card, headline on the dark
+PUI = json.loads((ROOT / "product-ui" / "anchors.json").read_text())
+
+
+def product_phone():
+    W, H = 1080, 1350
+    parts = [card(16, 16, W - 32, 880)]
+    ph_h = 800
+    sw, sh = PUI["mobile"]["manager-work"]["size"]
+    k = ph_h / sh
+    gap = 64
+    px = round((W - 2 * sw * k - gap) / 2)
+    py = 56
+    # Two real screens: the list with the request picked out, and the job it opens.
+    for i, screen in enumerate(("manager-work", "work-order")):
+        x = px + i * (sw * k + gap)
+        parts.append(f'<img class="abs" src="../product-ui/mobile/screens/{screen}.png" style="left:{x:.0f}px; top:{py}px; height:{ph_h}px; border-radius:{60 * k:.0f}px" alt="">')
+    bx, by, bw, bh = PUI["mobile"]["manager-work"]["boxes"]["water-heater"]
+    rx, ry, rw, rh = px + bx * k, py + by * k, bw * k, bh * k
+    parts.append(f'<div class="abs" style="left:{rx - 7:.0f}px; top:{ry - 7:.0f}px; width:{rw + 14:.0f}px; height:{rh + 14:.0f}px; border:4px solid #a5fc22; box-shadow:inset 0 0 0 1.5px #30303a; border-radius:14px"></div>')
+    parts.append(headline("Decide quotes from anywhere.", 56, 950, 968, 104))
+    parts.append(lockup(56, 1262))
+    return page(W, H, "\n".join(parts), "var(--ground-900)")
+
+
+# 7. Product shot, desktop, 1920 x 1080: the real maintenance board, moved in on one card
+def product_desktop():
+    W, H = 1920, 1080
+    CX, CY, CW, CH = 16, 16, 1110, 1048
+    RX, RW = CX + CW + 80, 600
+    parts = [card(CX, CY, CW, CH)]
+    bw, bh = CW - 80, round(900 * (CW - 80) / 1440)
+    bx0, by0 = CX + 40, CY + 40
+    lx, ly, lw, lh = PUI["desktop"]["maintenance-board"]["boxes"]["leak"]
+    s_ = 1.45
+    tx = min(0, max(bw - 1440 * s_, bw / 2 - (lx + lw / 2) * s_))
+    ty = min(0, max(bh - 900 * s_, bh / 2 - (ly + lh / 2) * s_))
+    parts.append(f'<div class="abs" style="left:{bx0}px; top:{by0}px; width:{bw}px; height:{bh}px; overflow:hidden; border-radius:18px; border:1px solid #e2e8f0">'
+                 f'<img src="../product-ui/desktop/screens/maintenance-board.png" style="position:absolute; left:0; top:0; width:1440px; transform-origin:0 0; transform:translate({tx:.1f}px, {ty:.1f}px) scale({s_})" alt=""></div>')
+    parts.append(f'<div class="abs" style="left:{bx0 + tx + lx * s_ - 6:.0f}px; top:{by0 + ty + ly * s_ - 6:.0f}px; width:{lw * s_ + 12:.0f}px; height:{lh * s_ + 12:.0f}px; border:4px solid #a5fc22; box-shadow:inset 0 0 0 1.5px #30303a; border-radius:12px"></div>')
+    parts.append(popup(CX + 56, by0 + bh + 56, "Active leak", "Kitchen faucet at King West 1708, flagged before a trade is booked.", width=CW - 112))
+    parts.append(lockup(CX + 56, 984, color="black"))
+    parts.append(headline("Every work order on one board.", RX, 96, RW, 104))
+    parts.append(f'<div class="abs" style="left:{RX}px; top:480px; width:{RW}px; border-radius:24px; overflow:hidden; background:#fff">'
+                 f'<img src="../product-ui/desktop/parts/work-order-card-leak.png" style="display:block; width:{RW}px" alt=""></div>')
+    return page(W, H, "\n".join(parts), "var(--ground-900)")
+
+
 (OUT / "spec-sheet-1080x1350.html").write_text(spec_sheet())
 (OUT / "data-plate-1080x1350.html").write_text(data_plate())
 (OUT / "annotated-1920x1080.html").write_text(annotated())
 (OUT / "email-hero-1104x552.html").write_text(email_hero())
 (OUT / "link-preview-1200x630.html").write_text(link_preview())
+(OUT / "product-phone-1080x1350.html").write_text(product_phone())
+(OUT / "product-desktop-1920x1080.html").write_text(product_desktop())
 if PRIVATE:
     PRIVATE.mkdir(parents=True, exist_ok=True)
     sys.path.insert(0, str(PRIVATE))
