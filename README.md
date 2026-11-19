@@ -19,7 +19,7 @@ For example, the white lockup for an email header:
 
 | Folder | What |
 | --- | --- |
-| `brand/` | Logos (SVG and PNG), fonts (Inter, IBM Plex Sans, IBM Plex Mono, with licences) and `tokens.json` |
+| `brand/` | Logos (SVG and PNG), fonts (Inter and IBM Plex Sans, with licences) and `tokens.json` |
 | `illustrations/` | The isometric line drawings (`svg/`, 21 subjects, dark and light), the small engine that draws them (`iso.py`, `build.py`, `scenes_more.py`) and `anchors.json`, the points leader lines attach to |
 | `motion/` | Example video clips (`out/*.mp4`, 1920 x 1080), the HTML pages they are rendered from, and `render.py`, which turns a page into an MP4 |
 | `templates/` | Layouts built from the drawings: spec sheet and data plate (LinkedIn, 1080 x 1350), annotated drawing (1920 x 1080), email hero (1104 x 552), link preview (1200 x 630). `gen.py` places the drawings and leader lines |

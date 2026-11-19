@@ -4,20 +4,17 @@
 <script src="motion.js"></script>
 <style>body { background: var(--ground-900); margin: 0; } .frame { width: 1920px; height: 1080px; background: var(--ground-900); }
 .hide { opacity: 0; }
+.fit { overflow: hidden; }
 .card { position: absolute; background: var(--mist); }
 .sweep-clip { position: absolute; overflow: hidden; pointer-events: none; }
-.sweep { position: absolute; top: 0; bottom: 0; left: -20%; width: 140%; opacity: 0.22; visibility: hidden;
+.sweep { position: absolute; top: 0; bottom: 0; left: -20%; width: 140%; opacity: 0.14; visibility: hidden;
   background: linear-gradient(90deg, #f8fafc 0%, #eefbd7 12%, #d8f7a3 26%, #baf85d 42%, #a5fc22 58%, #8ff741 74%, #7ff553 100%);
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.15) 7%, #000 22%, #000 78%, rgba(0,0,0,.15) 93%, transparent 100%); }
-.scan { position: absolute; inset: 0; border-radius: inherit; opacity: 0;
-  background: linear-gradient(180deg, #f8fafc 0%, #eefbd7 12%, #d8f7a3 26%, #baf85d 42%, #a5fc22 58%, #8ff741 74%, #7ff553 100%); }
-.leader { fill: none; stroke: #30303a; stroke-width: 1; }
-.ink { color: var(--ink-700); } .ink-soft { color: var(--ink-500); }
-.ink .dot.live::before, .dot.live.ink::before { box-shadow: inset 0 0 0 1.25px var(--ink-700); }
+.leader { fill: none; stroke: #30303a; stroke-width: 1.5; }
 </style></head>
 <body><div class="frame">
-<div id="card" class="card" style="left:16px; top:16px; width:1236px; height:1048px; border-radius:40px"></div>
-<svg id="d" class="abs" style="left:166px; top:296px; width:631px; height:620px; overflow:visible" xmlns="http://www.w3.org/2000/svg" viewBox="-234.1 -253.8 615.5 604.8">
+<div id="card" class="card" style="left:16px; top:16px; width:1110px; height:1048px; border-radius:40px"></div>
+<svg id="d" class="abs" style="left:126px; top:306px; width:611px; height:600px; overflow:visible" xmlns="http://www.w3.org/2000/svg" viewBox="-234.1 -253.8 615.5 604.8">
 <g id="floor-0">
 <polygon points="-206.11,119.00 147.22,323.00 147.22,278.80 -206.11,74.80" fill="#f8fafc" stroke="#30303a" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
 <polygon points="353.34,204.00 147.22,323.00 147.22,278.80 353.34,159.80" fill="#f8fafc" stroke="#30303a" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
@@ -123,25 +120,23 @@
 <polygon points="226.73,-103.36 291.50,-65.96 220.84,-25.16 156.06,-62.56" fill="#f8fafc" stroke="#30303a" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
 </g>
 </svg>
-<svg class="leaders" width="1920" height="1080"><polyline id="ld" class="leader" points="608.2,744.4 966,744.4"/><rect id="nd" x="604.7" y="740.9" width="7" height="7" fill="#a5fc22" stroke="#30303a" opacity="0"/></svg>
-<div id="t3" class="abs hide ink" style="left:982px; top:730.4px; width:230px"><div class="dot live" style="font-size:19px">Floor 3, Unit 214</div><div class="ink-soft" style="font-size:16px; line-height:1.35; margin-top:6px">2 open work orders.</div></div>
-<div id="cap" class="abs mono hide ink-soft" style="left:72px; top:68px; font-size:15px; font-weight:500">1.0&nbsp;&nbsp;Mill Court, 5 floors</div>
-<div class="sweep-clip" style="left:16px; top:16px; width:1236px; height:1048px; border-radius:40px"><div id="sw" class="sweep"></div></div>
-<div id="t1" class="abs dot hide" style="left:1336px; top:128px; color:var(--mist); font-size:20px">Portfolio</div>
-<h1 id="t2" class="abs hide" style="left:1336px; top:184px; width:500px; font-size:72px; line-height:1.02; letter-spacing:-0.045em; font-weight:400; color:var(--mist)">Open any floor.</h1>
-<p id="t4" class="abs hide" style="left:1336px; top:300px; width:440px; font-size:20px; line-height:1.45; color:var(--fg-muted)">Every floor and unit keeps its own history.</p>
-<img class="abs" src="../brand/logos/verstack-lockup-white.svg" style="left:1336px; top:990px; height:26px" alt="Verstack">
+<svg class="leaders" width="1920" height="1080"><polyline id="ld" class="leader" points="554.0,739.9 852,739.9"/></svg>
+<div id="t3" class="abs hide" style="left:876px; top:713.9px; width:230px; color:var(--ink-700)"><div style="font-size:40px; line-height:1.05; font-weight:600; letter-spacing:-0.03em">Floor 3</div><div style="font-size:28px; line-height:1.25; margin-top:10px; color:var(--ink-500)">2 open jobs</div></div>
+<h1 id="t2" class="abs hide fit" style="left:1206px; top:96px; width:600px; line-height:0.98; text-wrap:balance; letter-spacing:-0.05em; font-weight:400; color:var(--mist)">Open any floor.</h1>
+<p id="t4" class="abs hide" style="left:1206px; top:520px; width:600px; font-size:34px; line-height:1.28; letter-spacing:-0.015em; color:var(--fg-muted)">Every floor and unit keeps its own history.</p>
+<img class="abs" src="../brand/logos/verstack-lockup-white.svg" style="left:1206px; top:950px; height:34px" alt="Verstack">
 </div>
 <script>
-window.DURATION = 7.4;
+window.DURATION = 6.6;
 
-let items, floors, roof, ld, nd, t3;
-const GAP = 44, UY = 744.4, UX = 608.2, LX = 982;
+let items, floors, roof, ld, t3;
+const GAP = 44, UY = 739.9, UX = 554.0, LX = 876;
 function setup() {
   items = prepDraw(document.getElementById("d"));
   floors = [0, 1, 2, 3, 4].map((k) => document.getElementById("floor-" + k));
   roof = document.getElementById("roof");
-  ld = document.getElementById("ld"); nd = document.getElementById("nd"); t3 = document.getElementById("t3");
+  ld = document.getElementById("ld"); t3 = document.getElementById("t3");
+  fitText(document.getElementById("t2"), 170, 60, 400); above("t4", 950, 56);
 }
 function amount(t, k) {
   const out = ease(prog(t, 1.3 + (5 - k) * 0.08, 0.64));
@@ -150,25 +145,20 @@ function amount(t, k) {
 }
 function renderAt(t) {
   enter(document.getElementById("card"), t, 0, 0.5, 0);
-  sweep(document.getElementById("sw"), t, 0.25, 1.7);
-  enter(document.getElementById("cap"), t, 0.4);
-  drawAt(items, t, 0.4, 0.9, 0.45, "#f8fafc", 2.5);
+  enter(document.getElementById("t2"), t, 0.4);
+  drawAt(items, t, 0.3, 0.9, 0.45, "#f8fafc", 2.5);
   const svg = document.getElementById("d");
   const scale = svg.getBoundingClientRect().height / svg.viewBox.baseVal.height;
   floors.forEach((g, k) => g.setAttribute("transform", `translate(0 ${-k * GAP * amount(t, k) / scale})`));
   roof.setAttribute("transform", `translate(0 ${-5 * GAP * amount(t, 5) / scale})`);
   const y = UY - 2 * GAP * amount(t, 2);
-  ld.setAttribute("points", `${UX},${y} ${LX - 16},${y}`);
-  nd.setAttribute("y", y - 3.5);
+  ld.setAttribute("points", `${UX},${y} ${LX - 24},${y}`);
   leaderAt(ld, t, 2.9);
-  nd.setAttribute("opacity", t >= 2.9 && t < 4.9 ? 1 : 0);
   ld.style.opacity = t < 4.9 ? 1 : 0;
   enter(t3, t, 3.1, 0.48, 8);
   if (t >= 4.6) t3.style.opacity = 1 - prog(t, 4.6, 0.3);
-  t3.style.top = (y - 14) + "px";
-  enter(document.getElementById("t1"), t, 0.3);
-  enter(document.getElementById("t2"), t, 5.6);
-  enter(document.getElementById("t4"), t, 6.0);
+  t3.style.top = (y - 26) + "px";
+  enter(document.getElementById("t4"), t, 3.4);
 }
 window.addEventListener("load", () => {
   document.fonts.ready.then(() => {

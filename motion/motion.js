@@ -82,6 +82,28 @@ function scanAt(el, t, t0, dur = 1.3, peak = 1) {
   el.style.opacity = peak * (o * o * (3 - 2 * o));
 }
 
+/** Fit: the largest font size (step 2px) at which the text keeps every word inside its
+    box width and stays within maxH. Headlines fill their column instead of floating in it. */
+function fitText(el, maxPx, minPx, maxH) {
+  for (let px = maxPx; px >= minPx; px -= 2) {
+    el.style.fontSize = px + "px";
+    if (el.scrollWidth <= el.clientWidth + 1 && el.scrollHeight <= maxH) return px;
+  }
+  return minPx;
+}
+
+/** Put element id just under ref (after ref has been fitted). */
+function below(id, ref, gap) {
+  const r = document.getElementById(ref);
+  document.getElementById(id).style.top = (r.offsetTop + r.scrollHeight + gap) + "px";
+}
+
+/** Sit element id with its bottom gap px above y. */
+function above(id, y, gap) {
+  const el = document.getElementById(id);
+  el.style.top = (y - gap - el.scrollHeight) + "px";
+}
+
 /** Draw a leader polyline from its first point. */
 function leaderAt(el, t, t0, dur = 0.24) {
   if (!el._len) { el._len = el.getTotalLength() + 2; el.style.strokeDasharray = `${el._len} ${el._len}`; }

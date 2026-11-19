@@ -4,25 +4,18 @@
 <script src="motion.js"></script>
 <style>body { background: var(--ground-900); margin: 0; } .frame { width: 1920px; height: 1080px; background: var(--ground-900); }
 .hide { opacity: 0; }
+.fit { overflow: hidden; }
 .card { position: absolute; background: var(--mist); }
 .sweep-clip { position: absolute; overflow: hidden; pointer-events: none; }
-.sweep { position: absolute; top: 0; bottom: 0; left: -20%; width: 140%; opacity: 0.22; visibility: hidden;
+.sweep { position: absolute; top: 0; bottom: 0; left: -20%; width: 140%; opacity: 0.14; visibility: hidden;
   background: linear-gradient(90deg, #f8fafc 0%, #eefbd7 12%, #d8f7a3 26%, #baf85d 42%, #a5fc22 58%, #8ff741 74%, #7ff553 100%);
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.15) 7%, #000 22%, #000 78%, rgba(0,0,0,.15) 93%, transparent 100%); }
-.scan { position: absolute; inset: 0; border-radius: inherit; opacity: 0;
-  background: linear-gradient(180deg, #f8fafc 0%, #eefbd7 12%, #d8f7a3 26%, #baf85d 42%, #a5fc22 58%, #8ff741 74%, #7ff553 100%); }
-.leader { fill: none; stroke: #30303a; stroke-width: 1; }
-.ink { color: var(--ink-700); } .ink-soft { color: var(--ink-500); }
-.ink .dot.live::before, .dot.live.ink::before { box-shadow: inset 0 0 0 1.25px var(--ink-700); }
+.leader { fill: none; stroke: #30303a; stroke-width: 1.5; }
 </style></head>
 <body><div class="frame">
 <div id="card" class="card" style="left:16px; top:16px; width:1888px; height:1048px; border-radius:40px"></div>
-<div id="grid" class="abs" style="left:16px; top:16px; width:1888px; height:1048px; border-radius:40px; background-image: linear-gradient(rgb(48 48 58 / 0.05) 1px, transparent 1px), linear-gradient(90deg, rgb(48 48 58 / 0.05) 1px, transparent 1px); background-size: 60px 60px; background-position: -1px -1px;"></div>
-<svg id="plus" class="leaders" width="1920" height="1080"><g stroke="rgb(48 48 58 / 0.2)" stroke-width="1"><path d="M115 120h10M120 115v10"/><path d="M115 360h10M120 355v10"/><path d="M115 600h10M120 595v10"/><path d="M115 840h10M120 835v10"/><path d="M355 120h10M360 115v10"/><path d="M355 360h10M360 355v10"/><path d="M355 600h10M360 595v10"/><path d="M355 840h10M360 835v10"/><path d="M595 120h10M600 115v10"/><path d="M595 360h10M600 355v10"/><path d="M595 600h10M600 595v10"/><path d="M595 840h10M600 835v10"/><path d="M835 120h10M840 115v10"/><path d="M835 360h10M840 355v10"/><path d="M835 600h10M840 595v10"/><path d="M835 840h10M840 835v10"/><path d="M1075 120h10M1080 115v10"/><path d="M1075 360h10M1080 355v10"/><path d="M1075 600h10M1080 595v10"/><path d="M1075 840h10M1080 835v10"/><path d="M1315 120h10M1320 115v10"/><path d="M1315 360h10M1320 355v10"/><path d="M1315 600h10M1320 595v10"/><path d="M1315 840h10M1320 835v10"/><path d="M1555 120h10M1560 115v10"/><path d="M1555 360h10M1560 355v10"/><path d="M1555 600h10M1560 595v10"/><path d="M1555 840h10M1560 835v10"/><path d="M1795 120h10M1800 115v10"/><path d="M1795 360h10M1800 355v10"/><path d="M1795 600h10M1800 595v10"/><path d="M1795 840h10M1800 835v10"/></g></svg>
-<p id="t1" class="abs hide ink" style="left:560px; top:64px; width:800px; text-align:center; font-size:18px; line-height:1.55">Every work order, quote and inspection lands on the unit&#8217;s record, room by room.</p>
-<div class="abs" style="left:120px; top:200px; width:1680px; border-top:1px solid var(--line-light)"></div>
-<div id="t2" class="abs mono hide ink" style="left:120px; top:244px; font-size:15px; font-weight:500">1.0&nbsp;&nbsp;Unit record</div>
-<svg id="d" class="abs" style="left:560px; top:262px; width:1060px; height:739px; overflow:visible" xmlns="http://www.w3.org/2000/svg" viewBox="-349.5 -96.3 858.3 598.1">
+<h1 id="t1" class="abs hide fit" style="left:112px; top:112px; width:780px; line-height:0.98; text-wrap:balance; letter-spacing:-0.05em; font-weight:400; color:var(--ink-700)">Every job lands on the room it belongs to.</h1>
+<svg id="d" class="abs" style="left:760px; top:290px; width:1060px; height:739px; overflow:visible" xmlns="http://www.w3.org/2000/svg" viewBox="-349.5 -96.3 858.3 598.1">
 <polygon points="-318.70,197.80 159.35,473.80 159.35,460.00 -318.70,184.00" fill="#f8fafc" stroke="#30303a" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
 <polygon points="478.05,289.80 159.35,473.80 159.35,460.00 478.05,276.00" fill="#f8fafc" stroke="#30303a" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
 <polygon points="0.00,0.00 478.05,276.00 159.35,460.00 -318.70,184.00" fill="#f8fafc" stroke="#30303a" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
@@ -137,32 +130,24 @@
 <polygon points="480.83,277.61 162.14,461.61 162.14,442.29 480.83,258.29" fill="#f8fafc" stroke="#30303a" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
 <polygon points="475.26,255.07 480.83,258.29 162.14,442.29 156.56,439.07" fill="#f8fafc" stroke="#30303a" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
 </svg>
-<svg class="leaders" width="1920" height="1080"><polyline id="l0" class="leader" points="1064.3,400.1 1064.3,270 1466,270"/><rect id="n0" x="1060.8" y="396.6" width="7" height="7" fill="#a5fc22" stroke="#30303a" opacity="0"/><polyline id="l1" class="leader" points="735.7,528.6 735.7,530 400,530"/><rect id="n1" x="732.2" y="525.1" width="7" height="7" fill="#f8fafc" stroke="#30303a" opacity="0"/><polyline id="l2" class="leader" points="797.2,711.8 797.2,870 400,870"/><rect id="n2" x="793.7" y="708.3" width="7" height="7" fill="#f8fafc" stroke="#30303a" opacity="0"/><polyline id="l3" class="leader" points="1075.2,778.6 1075.2,910 1546,910"/><rect id="n3" x="1071.7" y="775.1" width="7" height="7" fill="#f8fafc" stroke="#30303a" opacity="0"/></svg>
-<div id="c0" class="callout hide ink" style="left:1480px; top:258px; width:236px"><div class="k ink-soft">1.1</div><div class="n">Kitchen</div><div class="s ink-soft">Dishwasher, repeat repair</div></div>
-<div id="c1" class="callout hide ink" style="left:150px; top:518px; width:236px"><div class="k ink-soft">1.2</div><div class="n">Bathroom</div><div class="s ink-soft">No open findings</div></div>
-<div id="c2" class="callout hide ink" style="left:150px; top:858px; width:236px"><div class="k ink-soft">1.3</div><div class="n">Entry</div><div class="s ink-soft">Move-out walk recorded</div></div>
-<div id="c3" class="callout hide ink" style="left:1560px; top:898px; width:236px"><div class="k ink-soft">1.4</div><div class="n">Bedroom</div><div class="s ink-soft">Paint, ready by 1 Sep</div></div>
-<div class="sweep-clip" style="left:16px; top:16px; width:1888px; height:1048px; border-radius:40px"><div id="sw" class="sweep"></div></div>
-<img class="abs" src="../brand/logos/verstack-lockup-black.svg" style="left:120px; top:990px; height:26px" alt="Verstack">
+<svg class="leaders" width="1920" height="1080"><polyline id="l0" class="leader" points="1264.3,428.1 1264.3,278.1 1464.3,278.1"/><polyline id="l1" class="leader" points="935.7,556.6 520,556.6"/></svg>
+<div id="c0" class="abs hide" style="left:1488.3px; top:252.10000000000002px; width:360px; color:var(--ink-700)"><div style="font-size:40px; line-height:1.05; font-weight:600; letter-spacing:-0.03em">Dishwasher</div><div style="font-size:28px; line-height:1.25; margin-top:10px; color:var(--ink-500)">Repeat repair, flagged</div></div>
+<div id="c1" class="abs hide" style="left:112px; top:532.6px; width:380px; color:var(--ink-700)"><div style="font-size:40px; line-height:1.05; font-weight:600; letter-spacing:-0.03em">Bathroom</div><div style="font-size:28px; line-height:1.25; margin-top:10px; color:var(--ink-500)">Leak fixed, photos on file</div></div>
+<img class="abs" src="../brand/logos/verstack-lockup-black.svg" style="left:112px; top:950px; height:34px" alt="Verstack">
 </div>
 <script>
-window.DURATION = 6.4;
+window.DURATION = 6.0;
 
 let items;
-function setup() { items = prepDraw(document.getElementById("d")); }
+function setup() { items = prepDraw(document.getElementById("d")); fitText(document.getElementById("t1"), 120, 60, 340); }
 function renderAt(t) {
   enter(document.getElementById("card"), t, 0, 0.5, 0);
-  enter(document.getElementById("grid"), t, 0.1, 0.6, 0);
-  enter(document.getElementById("plus"), t, 0.1, 0.6, 0);
-  sweep(document.getElementById("sw"), t, 0.25, 1.8);
   enter(document.getElementById("t1"), t, 0.3);
-  enter(document.getElementById("t2"), t, 0.5);
-  drawAt(items, t, 0.6, 1.6, 0.6, "#f8fafc", 2.8);
-  [2.8, 3.5, 4.2, 4.9].forEach((s, i) => {
-    leaderAt(document.getElementById("l" + i), t, s);
-    document.getElementById("n" + i).setAttribute("opacity", t >= s ? 1 : 0);
-    enter(document.getElementById("c" + i), t, s + 0.2, 0.4, 8);
-  });
+  drawAt(items, t, 0.5, 1.6, 0.6, "#f8fafc", 2.7);
+  leaderAt(document.getElementById("l0"), t, 3.0);
+  enter(document.getElementById("c0"), t, 3.2, 0.48, 8);
+  leaderAt(document.getElementById("l1"), t, 4.0);
+  enter(document.getElementById("c1"), t, 4.2, 0.48, 8);
 }
 window.addEventListener("load", () => {
   document.fonts.ready.then(() => {

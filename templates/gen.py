@@ -36,7 +36,8 @@ def img(name, theme, box, base="../illustrations/svg"):
 
 
 def node(x, y, color, size=7, fill=None):
-    return f'<rect x="{x - size / 2:.1f}" y="{y - size / 2:.1f}" width="{size}" height="{size}" fill="{fill or color}" stroke="{color}" stroke-width="1"/>'
+    """Kept for the private layout's signature; public layouts draw no nodes."""
+    return ""
 
 
 def page(w, h, body, bg, css_extra=""):
@@ -49,105 +50,87 @@ def page(w, h, body, bg, css_extra=""):
 """
 
 
-# 1. Spec sheet, 1080 x 1350, dark ------------------------------------------------
+# Shared pieces. Sparse and bold: headlines fill their space, at most two callouts,
+# no text under 28px at full size, no index numbers, no small marks.
+def card(x, y, w, h, radius=40, bg="var(--mist)"):
+    return f'<div class="abs" style="left:{x}px; top:{y}px; width:{w}px; height:{h}px; background:{bg}; border-radius:{radius}px"></div>'
+
+
+def headline(text, x, y, w, size, color="var(--mist)"):
+    return (f'<h1 class="abs" style="left:{x}px; top:{y}px; width:{w}px; font-size:{size}px; line-height:0.98; text-wrap:balance; '
+            f'letter-spacing:-0.05em; font-weight:400; color:{color}">{text}</h1>')
+
+
+def popup(x, y, name, sub, width=360, name_px=40, sub_px=28, ink=True):
+    c1, c2 = ("var(--ink-700)", "var(--ink-500)") if ink else ("var(--mist)", "var(--fg-muted)")
+    return (f'<div class="abs" style="left:{x}px; top:{y}px; width:{width}px; color:{c1}">'
+            f'<div style="font-size:{name_px}px; line-height:1.05; font-weight:600; letter-spacing:-0.03em">{name}</div>'
+            f'<div style="font-size:{sub_px}px; line-height:1.25; margin-top:10px; color:{c2}">{sub}</div></div>')
+
+
+def leaders(W, H, *pts, color="#30303a", width=1.5):
+    lines = "".join(f'<polyline points="{p}" fill="none" stroke="{color}" stroke-width="{width}"/>' for p in pts)
+    return f'<svg class="leaders" width="{W}" height="{H}">{lines}</svg>'
+
+
+def lockup(x, y, h=34, color="white", side="left"):
+    pos = f"left:{x}px" if side == "left" else f"right:{x}px"
+    return f'<img class="abs" src="../brand/logos/verstack-lockup-{color}.svg" style="{pos}; top:{y}px; height:{h}px" alt="Verstack">'
+
+
+# 1. Spec sheet (LinkedIn feed), 1080 x 1350: light card with the drawing, headline on the dark
 def spec_sheet():
     W, H = 1080, 1350
-    wl, wt, ww, wh = 56, 88, 968, 1206
-    pl, pt = wl + 10, wt + 40
-    pw = ww - 20
-    parts = []
-    parts.append(f'<div class="abs" style="left:{wl}px; top:{wt}px; width:{ww}px; height:{wh}px; background:var(--ground-800); border:1px solid rgb(255 255 255 / 0.08); border-radius:22px"></div>')
-    parts.append(f'<div class="abs dot meta" style="left:{wl + 18}px; top:{wt + 11}px; color:var(--fg-muted); font-size:13px">Repeat repair check.pdf</div>')
-    parts.append(f'<div class="abs" style="left:{pl}px; top:{pt}px; width:{pw}px; height:{wh - 50}px; background:var(--ground-900); border-radius:14px"></div>')
-    # header: title, meta, description
-    parts.append(f'<h1 class="abs title" style="left:{pl + 28}px; top:{pt + 26}px; font-size:76px; color:var(--mist)">Repeat repair<br>check</h1>')
-    parts.append(f'<div class="abs meta" style="left:{pl + 500}px; top:{pt + 30}px; color:var(--fg-subtle); font-size:12px">Verstack<br>Product update, November 2026</div>')
-    parts.append(f'<p class="abs" style="left:{pl + 500}px; top:{pt + 138}px; width:390px; font-size:18px; line-height:1.45; color:var(--mist)">A resident reports a fault. Verstack checks the unit&#8217;s repair history and budget before a trade is booked, and flags the repeat work order for the manager.</p>')
-    # three small tiles
-    ty, th, gap = pt + 330, 300, 12
-    tw = (pw - 2 * 28 - 2 * gap) / 3
-    for i, (name, label, height) in enumerate([("dishwasher", "Dishwasher", 210), ("water-heater", "Water heater", 220), ("condenser", "Condenser", 196)]):
-        tl = pl + 28 + i * (tw + gap)
-        x0, y0, vw, vh = A[name]["viewBox"]
-        iw = vw * height / vh
-        parts.append(f'<div class="tile" style="left:{tl:.0f}px; top:{ty}px; width:{tw:.0f}px; height:{th}px"><span class="dot">{label}</span></div>')
-        parts.append(img(name, "dark", (tl + (tw - iw) / 2, ty + 62, iw, height)))
-    # big tile with the unit plan
-    by = ty + th + gap
-    bh = pt + wh - 50 - 28 - by
-    bw = pw - 56
-    bl = pl + 28
-    parts.append(f'<div class="tile" style="left:{bl}px; top:{by}px; width:{bw}px; height:{bh}px"><span class="dot">Unit 214, Mill Court</span></div>')
-    box, pt_of = place("unit-plan", bl + 36, by + 64, height=bh - 96)
-    parts.append(img("unit-plan", "dark", box))
+    parts = [card(16, 16, W - 32, 830)]
+    box, pt_of = place("unit-plan", 74, 150, width=900)
+    parts.append(img("unit-plan", "light", box))
     dx, dy = pt_of("dishwasher")
-    lx, ly = bl + bw - 210, by + 70
-    parts.append(f'<svg class="leaders" width="{W}" height="{H}"><polyline points="{dx},{dy} {dx},{ly + 8} {lx - 12},{ly + 8}" stroke="#f8fafc"/>{node(dx, dy, "#f8fafc", 7, "#171a19")}</svg>')
-    parts.append(f'<div class="callout" style="left:{lx}px; top:{ly - 4}px; width:190px; color:var(--mist)"><div class="dot live" style="font-size:15px">Dishwasher</div><div class="s" style="color:var(--fg-muted)">2 work orders since March. Flagged as a repeat repair.</div></div>')
-    return page(W, H, "\n".join(parts), "var(--ground-950)")
+    parts.append(leaders(W, H, f"{dx},{dy} {dx},{dy - 120} {dx + 140},{dy - 120}"))
+    parts.append(popup(dx + 162, dy - 146, "Dishwasher", "Flagged as a repeat repair", width=380))
+    parts.append(headline("Repeat repairs get flagged first.", 56, 900, 968, 104))
+    parts.append(lockup(56, 1262))
+    parts.append('<div class="abs dot live" style="right:56px; top:1260px; font-size:32px; gap:14px; color:var(--mist)">Live</div>')
+    return page(W, H, "\n".join(parts), "var(--ground-900)", ".dot::before { width: 14px; height: 14px; }")
 
 
-# 2. Data plate, 1080 x 1350, light -----------------------------------------------
+# 2. Data plate, 1080 x 1350, light: a big title, the building, three bold rows
 def data_plate():
     W, H = 1080, 1350
     parts = []
     parts.append('<h1 class="abs" style="left:56px; top:48px; font-size:230px; line-height:0.9; letter-spacing:-0.06em; font-weight:400; color:var(--ink-900)">Turns</h1>')
-    box, pt_of = place("building", 36, 400, width=580)
+    box, pt_of = place("building", 36, 420, width=560)
     parts.append(img("building", "light", box))
-    rows = [
-        ("Unit 214", True, "Make ready", "Paint, clean", "Ready by 1 Sep"),
-        ("Unit 118", False, "Scheduled", "Clean", "Ready by 29 Aug"),
-        ("Unit 402", False, "Review", "Clean", "Ready by 28 Aug"),
-    ]
-    x0, y = 612, 430
-    for i, (unit, live, stage, work, ready) in enumerate(rows):
-        badge = (f'<span style="display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%; background:{"var(--lime)" if live else "transparent"}; '
-                 f'box-shadow:{"none" if live else "inset 0 0 0 1.25px var(--ink-700)"}; font-size:12px; font-weight:600; color:#000; margin-left:10px">{i + 1}</span>')
-        parts.append(f'<div class="abs" style="left:{x0}px; top:{y}px; width:412px; border-top:1px solid var(--ink-700)"></div>')
-        parts.append(f'<div class="abs" style="left:{x0}px; top:{y + 16}px; font-size:22px; font-weight:400; letter-spacing:-0.02em; color:var(--ink-900); display:flex; align-items:center">{unit}{badge}</div>')
-        parts.append(f'<div class="abs" style="left:{x0 + 210}px; top:{y + 16}px; width:214px; color:var(--ink-900)"><div style="font-size:22px; letter-spacing:-0.02em; line-height:1.15">{stage}</div>'
-                     f'<div class="meta" style="margin-top:12px; color:var(--ink-500)">{work}</div><div class="meta" style="margin-top:4px; color:var(--ink-500)">{ready}</div></div>')
-        y += 200
-    parts.append(f'<div class="abs" style="left:{x0}px; top:{y}px; width:412px; border-top:1px solid var(--ink-700)"></div>')
-    parts.append('<div class="abs meta" style="left:56px; bottom:56px; color:var(--ink-500)">Mill Court turns, this week</div>')
-    parts.append('<img class="abs" src="../brand/logos/verstack-lockup-black.svg" style="right:56px; bottom:56px; height:24px" alt="Verstack">')
+    rows = [("Unit 214", "Make ready", "Ready by 1 Sep"), ("Unit 118", "Scheduled", "Ready by 29 Aug"), ("Unit 402", "Review", "Ready by 28 Aug")]
+    x0, y = 612, 400
+    for unit, stage, ready in rows:
+        parts.append(f'<div class="abs" style="left:{x0}px; top:{y}px; width:412px; border-top:1.5px solid var(--ink-700)"></div>')
+        parts.append(f'<div class="abs" style="left:{x0}px; top:{y + 24}px; width:412px; color:var(--ink-900)">'
+                     f'<div style="font-size:44px; font-weight:600; letter-spacing:-0.03em; line-height:1.05">{unit}</div>'
+                     f'<div style="font-size:34px; letter-spacing:-0.02em; margin-top:10px">{stage}</div>'
+                     f'<div style="font-size:28px; margin-top:6px; color:var(--ink-500)">{ready}</div></div>')
+        y += 230
+    parts.append(f'<div class="abs" style="left:{x0}px; top:{y}px; width:412px; border-top:1.5px solid var(--ink-700)"></div>')
+    parts.append(lockup(56, 1260, color="black"))
     return page(W, H, "\n".join(parts), "var(--surface-100)")
 
 
-# 3. Annotated drawing, 1920 x 1080, dark grid ------------------------------------
+# 3. Annotated drawing, 1920 x 1080: one full light card, a headline, two callouts
 def annotated():
     W, H = 1920, 1080
-    grid = ("background-image: linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);"
-            " background-size: 60px 60px; background-position: -1px -1px;")
-    parts = [f'<div class="abs" style="inset:0; {grid}"></div>']
-    pluses = "".join(f'<path d="M{x - 5} {y}h10M{x} {y - 5}v10"/>' for x in range(120, W, 240) for y in range(120, H, 240))
-    parts.append(f'<svg class="leaders" width="{W}" height="{H}"><g stroke="rgb(255 255 255 / 0.22)" stroke-width="1">{pluses}</g></svg>')
-    parts.append('<p class="abs" style="left:560px; top:64px; width:800px; text-align:center; font-size:18px; line-height:1.55; color:var(--mist)">Unit 214, Mill Court. Every work order, quote and inspection lands on the unit&#8217;s record, room by room, so the next decision starts with the history.</p>')
-    parts.append('<div class="abs" style="left:120px; top:200px; width:1680px; border-top:1px solid var(--line-dark)"></div>')
-    box, pt_of = place("unit-plan", 560, 262, width=1060)
-    parts.append(img("unit-plan", "dark", box))
-    callouts = [
-        ("dishwasher", "1.1", "Kitchen", "Dishwasher, repeat repair", True, (1480, 260)),
-        ("bath", "1.2", "Bathroom", "No open findings", False, (150, 520)),
-        ("entry", "1.3", "Entry", "Move-out walk recorded", False, (150, 860)),
-        ("bed", "1.4", "Bedroom", "Paint, ready by 1 Sep", False, (1560, 900)),
-    ]
-    lines = []
-    for anchor, k, name, sub, live, (lx, ly) in callouts:
-        ax, ay = pt_of(anchor)
-        if lx > ax:
-            pts = f"{ax},{ay} {ax},{ly + 10} {lx - 14},{ly + 10}"
-        else:
-            pts = f"{ax},{ay} {ax},{ly + 10} {lx + 250},{ly + 10}"
-        lines.append(f'<polyline points="{pts}" stroke="#f8fafc"/>' + node(ax, ay, "#f8fafc", 7, "#a5fc22" if live else "#171a19"))
-        parts.append(f'<div class="callout" style="left:{lx}px; top:{ly - 2}px; width:236px; color:var(--mist)"><div class="k" style="color:var(--fg-subtle)">{k}</div><div class="n">{name}</div><div class="s" style="color:var(--fg-muted)">{sub}</div></div>')
-    parts.append('<div class="abs mono" style="left:120px; top:244px; font-size:15px; font-weight:500; color:var(--mist)">1.0&nbsp;&nbsp;Unit record</div>')
-    parts.append(f'<svg class="leaders" width="{W}" height="{H}">{"".join(lines)}</svg>')
-    parts.append('<img class="abs" src="../brand/logos/verstack-lockup-white.svg" style="left:120px; bottom:72px; height:26px" alt="Verstack">')
-    return page(W, H, "\n".join(parts), "var(--ground-950)")
+    parts = [card(16, 16, W - 32, H - 32)]
+    parts.append(headline("Every job lands on the room it belongs to.", 112, 112, 780, 104, color="var(--ink-700)"))
+    box, pt_of = place("unit-plan", 760, 290, width=1060)
+    parts.append(img("unit-plan", "light", box))
+    dx, dy = pt_of("dishwasher")
+    bx, by = pt_of("bath")
+    parts.append(leaders(W, H, f"{dx},{dy} {dx},{dy - 150} {dx + 200},{dy - 150}", f"{bx},{by} 520,{by}"))
+    parts.append(popup(dx + 224, dy - 176, "Dishwasher", "Repeat repair, flagged"))
+    parts.append(popup(112, by - 24, "Bathroom", "Leak fixed, photos on file", width=380))
+    parts.append(lockup(112, 950, color="black"))
+    return page(W, H, "\n".join(parts), "var(--ground-900)")
 
 
-# 4. Email hero, 1104 x 552 (shown at 552 x 276), dark ---------------------------
+# 4. Email hero, 1104 x 552 (shown at 552 x 276), dark: the plan and one big callout
 def email_hero():
     W, H = 1104, 552
     parts = []
@@ -155,20 +138,20 @@ def email_hero():
     parts.append(img("unit-plan", "dark", box))
     dx, dy = pt_of("dishwasher")
     lx, ly = 770, 120
-    parts.append(f'<svg class="leaders" width="{W}" height="{H}"><polyline points="{dx},{dy} {dx},{ly + 24} {lx - 22},{ly + 24}" stroke="#f8fafc" stroke-width="2.5"/>{node(dx, dy, "#f8fafc", 14, "#171a19")}</svg>')
+    parts.append(leaders(W, H, f"{dx},{dy} {dx},{ly + 24} {lx - 22},{ly + 24}", color="#f8fafc", width=2.5))
     parts.append(f'<div class="callout" style="left:{lx}px; top:{ly - 4}px; width:320px; color:var(--mist)"><div class="dot live" style="font-size:44px; gap:16px; letter-spacing:-0.02em">Dishwasher</div><div class="s" style="font-size:34px; line-height:1.3; color:var(--fg-muted); margin-top:12px">Unit 214<br>Repeat repair</div></div>')
     return page(W, H, "\n".join(parts), "var(--ground-900)", ".dot::before { width: 18px; height: 18px; }")
 
 
-# 5. Link preview, 1200 x 630, dark ----------------------------------------------
+# 5. Link preview, 1200 x 630: headline on the dark, the building on a light card
 def link_preview():
     W, H = 1200, 630
-    parts = []
-    box, pt_of = place("building", 610, 46, height=538)
-    parts.append(img("building", "dark", box))
-    parts.append('<h1 class="abs" style="left:64px; top:150px; width:560px; font-size:72px; line-height:0.98; letter-spacing:-0.05em; font-weight:400; color:var(--mist)">Autonomous maintenance management.</h1>')
-    parts.append('<img class="abs" src="../brand/logos/verstack-lockup-white.svg" style="left:64px; top:64px; height:30px" alt="Verstack">')
-    parts.append('<div class="abs meta" style="left:64px; bottom:60px; color:var(--fg-muted); font-size:16px">verstack.ai</div>')
+    parts = [card(600, 16, 584, 598, radius=32)]
+    box, pt_of = place("building", 640, 60, height=500)
+    parts.append(img("building", "light", box))
+    parts.append(lockup(64, 64))
+    parts.append(headline("Autonomous maintenance management.", 64, 150, 500, 80))
+    parts.append('<div class="abs" style="left:64px; top:530px; font-size:30px; letter-spacing:-0.01em; color:var(--fg-muted)">verstack.ai</div>')
     return page(W, H, "\n".join(parts), "var(--ground-900)")
 
 

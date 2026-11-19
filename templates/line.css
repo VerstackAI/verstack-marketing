@@ -1,7 +1,5 @@
 /* Verstack line-drawing layouts. Values mirror brand/tokens.json. */
 @font-face { font-family: "Inter"; src: url("../brand/fonts/Inter-Variable-latin.woff2") format("woff2"); font-weight: 100 900; }
-@font-face { font-family: "IBM Plex Mono"; src: url("../brand/fonts/IBMPlexMono-400-latin.woff2") format("woff2"); font-weight: 400; }
-@font-face { font-family: "IBM Plex Mono"; src: url("../brand/fonts/IBMPlexMono-500-latin.woff2") format("woff2"); font-weight: 500; }
 
 :root {
   --ground-950: #101312; --ground-900: #171a19; --ground-800: #222624; --tile: #1c201f;
@@ -23,7 +21,6 @@ body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antial
 
 .title { font-weight: 300; letter-spacing: -0.04em; line-height: 0.98; }
 .meta { font-size: 13px; line-height: 1.35; }
-.mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
 
 .tile { position: absolute; background: var(--tile); border: 1px solid rgb(255 255 255 / 0.06); border-radius: 14px; overflow: hidden; }
 .tile .dot { position: absolute; left: 18px; top: 16px; color: var(--mist); }
@@ -32,6 +29,5 @@ body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antial
 .leaders { position: absolute; inset: 0; pointer-events: none; }
 .leaders line, .leaders polyline { fill: none; stroke-width: 1; }
 .callout { position: absolute; }
-.callout .k { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 14px; font-weight: 500; }
 .callout .n { font-size: 17px; font-weight: 500; margin-top: 2px; }
 .callout .s { font-size: 14px; margin-top: 3px; }
