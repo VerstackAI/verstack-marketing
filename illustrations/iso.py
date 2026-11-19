@@ -12,9 +12,16 @@ code can recolour a drawing for light or dark mode.
 import json
 import math
 import pathlib
+import re
 
 C30 = math.cos(math.radians(30))
 S30 = math.sin(math.radians(30))
+
+# WHY: a drawing file shown on its own (a still, a tile) scales its lines with it, at the
+# clips' rule: the heaviest line is 0.3% of the drawing's largest side, the others in
+# proportion. Clips read these widths only as relative weights, so they are unchanged.
+LINE_SHARE = 0.003
+STROKE_WIDTH = re.compile(r'stroke-width="([\d.]+)"')
 
 THEMES = {
     # strokes and the lime part; tones are added from the tokens below
@@ -235,4 +242,9 @@ class Drawing:
         if width:
             attrs += f' width="{width}" height="{width * h / w:.0f}"'
         body = "\n".join(self.els)
+        drawing_size = max(max(self.xs) - min(self.xs), max(self.ys) - min(self.ys))
+        heaviest = max(float(m) for m in STROKE_WIDTH.findall(body))
+        k = LINE_SHARE * drawing_size / heaviest
+        body = STROKE_WIDTH.sub(lambda m: f'stroke-width="{float(m.group(1)) * k:.3f}"', body)
+        body = body.replace(' vector-effect="non-scaling-stroke"', "")
         return f'<svg xmlns="http://www.w3.org/2000/svg" {attrs}>\n{body}\n</svg>\n', (x0, y0, w, h)

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-19, one line width everywhere
+
+- The drawing files now scale their lines with the drawing, at the clips' rule: the heaviest line is 0.3% of the drawing's longer side, the others in proportion. Before, the files used a fixed 1.25 to 2 px line, so a drawing shown small (a tile, a thumbnail) looked much thicker and darker than its clip.
+- Clips are unchanged (they only read the files' widths as relative weights; frames compared pixel for pixel). The five still samples with drawings are re-rendered.
+
 ## 2026-11-19, clean phone screens
 
 - The six phone screens are re-captured without the design canvas's home indicator (the grey bar under the menu) and the shell's drop shadow. Everything outside the phone's rounded corners is now transparent, so no grey shows at the corners on any card.
