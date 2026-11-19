@@ -19,8 +19,10 @@ For example, the white lockup for an email header:
 
 | Folder | What |
 | --- | --- |
-| `brand/` | Logos (SVG and PNG), fonts (Inter, IBM Plex Sans, with licences) and `tokens.json`, the colour, type and spacing values |
-| `templates/` | HTML templates for release graphics: `release-1080x1350.html` (LinkedIn feed) and `release-1200x630.html` (email and link previews) |
+| `brand/` | Logos (SVG and PNG), fonts (Inter, IBM Plex Sans, IBM Plex Mono, with licences) and `tokens.json` |
+| `illustrations/` | The isometric line drawings (`svg/`, 21 subjects, dark and light), the small engine that draws them (`iso.py`, `build.py`, `scenes_more.py`) and `anchors.json`, the points leader lines attach to |
+| `motion/` | Example video clips (`out/*.mp4`, 1920 x 1080), the HTML pages they are rendered from, and `render.py`, which turns a page into an MP4 |
+| `templates/` | Layouts built from the drawings: spec sheet and data plate (LinkedIn, 1080 x 1350), annotated drawing (1920 x 1080), email hero (1104 x 552), link preview (1200 x 630). `gen.py` places the drawings and leader lines |
 | `email/` | Source of the Resend template `verstack-product-update`, plus sample values |
 | `releases/` | One folder per release, holding its rendered images |
 | `scripts/render.sh` | Turns a template into a PNG with headless Chrome |
@@ -29,11 +31,16 @@ The design rules live in the **Verstack Marketing** design system on claude.ai. 
 
 ## Making the images for a release
 
-1. Copy each template inside `templates/`, keeping the size in the name: `templates/2026-11-repeat-repairs-1080x1350.html`.
-2. Edit the text where the template says `EDIT`.
+1. Edit the words in `templates/gen.py` (or straight in the HTML for a one-off).
+2. Run `python3 templates/gen.py` if you changed `gen.py`.
 3. Render each one into the release folder:
-   `scripts/render.sh templates/2026-11-repeat-repairs-1080x1350.html releases/2026-11-repeat-repairs/linkedin-1080x1350.png`
+   `scripts/render.sh templates/spec-sheet-1080x1350.html releases/2026-11-repeat-repairs/spec-sheet-1080x1350.png`
 4. Commit and push. The images are live at the Pages link a minute or two later.
-5. Use the 1200 x 630 image link in the email and attach the 1080 x 1350 PNG to the LinkedIn post.
 
-`releases/_sample/` shows what the templates produce with sample copy.
+New drawing? Add a function to `illustrations/scenes_more.py`, run `python3 illustrations/build.py`, then `python3 templates/gen.py`.
+
+New clip? Add a function to `motion/gen.py`, run it, then `python3 motion/render.py <clip>`. Check single frames first with `--stills 1.5 4`. Rendering needs Python Playwright and ffmpeg.
+
+`releases/_sample/` shows what each template produces with sample copy taken from verstack.ai.
+
+Unannounced work never goes in this repo. `build.py` and `gen.py` can load extra scenes from a private folder passed on the command line, and write their output there.

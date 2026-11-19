@@ -4,11 +4,6 @@
   "HEADLINE": "Repeat repairs get flagged before anyone books a trade.",
   "INTRO": "When the same appliance breaks twice, the second visit is usually the expensive one. Verstack now checks a unit's repair history and budget before work starts.",
   "STATUS_LABEL": "Live",
-  "STATUS_BG": "#a5fc22",
-  "STATUS_COLOR": "#000000",
-  "CARD_TITLE": "Dishwasher &middot; Unit 214",
-  "CARD_DETAIL": "Not draining &middot; 2 work orders &middot; last serviced 14 Mar 2025 by Marsh Appliance",
-  "CARD_CHIP": "Repeat repair",
   "STEP_1": "A resident reports that the dishwasher in Unit 214 isn't draining.",
   "STEP_2": "Verstack finds two earlier work orders on the same appliance and flags a repeat repair.",
   "STEP_3": "The manager sees the history and the unit budget beside the quote, then decides: repair or replace.",
@@ -17,5 +12,7 @@
   "CTA_URL": "https://cal.com/nathaniel-rudichuk-qmkbt8/30min",
   "SIGNOFF": "Nate, founder of Verstack",
   "COMPANY_ADDRESS": "6659 Rue De Lanaudière, Montréal, QC H2G 3B1, Canada",
-  "RESEND_UNSUBSCRIBE_URL": "#"
+  "RESEND_UNSUBSCRIBE_URL": "#",
+  "HERO_URL": "https://verstackai.github.io/verstack-marketing/releases/_sample/email-hero-1104x552.png",
+  "HERO_ALT": "Line drawing of Unit 214 with the dishwasher highlighted: repeat repair, 2 work orders."
 }

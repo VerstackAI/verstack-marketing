@@ -36,29 +36,20 @@
 </td>
 </tr>
 
-<!-- Scan tile strip -->
+<!-- Hero line drawing -->
 <tr>
-<td bgcolor="#171a19" style="background-color:#171a19; padding-top:32px; padding-right:32px; padding-bottom:0; padding-left:32px;">
-<table role="presentation" cellpadding="0" cellspacing="0" border="0">
-<tr>
-<td width="44" height="28" bgcolor="#202421" style="width:44px; height:28px; background-color:#202421; border:1px solid #2f3331; border-radius:8px; font-size:0; line-height:0;">&nbsp;</td>
-<td width="8" style="width:8px; font-size:0; line-height:0;">&nbsp;</td>
-<td width="44" height="28" bgcolor="#202421" style="width:44px; height:28px; background-color:#202421; border:1px solid #2f3331; border-radius:8px; font-size:0; line-height:0;">&nbsp;</td>
-<td width="8" style="width:8px; font-size:0; line-height:0;">&nbsp;</td>
-<td width="44" height="28" bgcolor="#a5fc22" style="width:44px; height:28px; background-color:#a5fc22; background-image:linear-gradient(180deg, #f8fafc 0%, #eefbd7 12%, #d8f7a3 26%, #baf85d 42%, #a5fc22 58%, #8ff741 74%, #7ff553 100%); border:1px solid #a5fc22; border-radius:8px; font-size:0; line-height:0;">&nbsp;</td>
-<td width="8" style="width:8px; font-size:0; line-height:0;">&nbsp;</td>
-<td width="44" height="28" bgcolor="#202421" style="width:44px; height:28px; background-color:#202421; border:1px solid #2f3331; border-radius:8px; font-size:0; line-height:0;">&nbsp;</td>
-<td width="8" style="width:8px; font-size:0; line-height:0;">&nbsp;</td>
-<td width="44" height="28" bgcolor="#1c1f1e" style="width:44px; height:28px; background-color:#1c1f1e; border:1px solid #262a28; border-radius:8px; font-size:0; line-height:0;">&nbsp;</td>
-</tr>
-</table>
+<td bgcolor="#171a19" style="background-color:#171a19; padding-top:20px; padding-right:24px; padding-bottom:0; padding-left:24px; font-size:0; line-height:0;">
+<img src="{{{HERO_URL}}}" width="552" height="276" alt="{{{HERO_ALT}}}" border="0" style="display:block; border:0; width:100%; max-width:552px; height:auto; color:#c2c4c5; font-family:Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:13px; line-height:20px;">
 </td>
 </tr>
 
 <!-- Headline and intro -->
 <tr>
 <td bgcolor="#171a19" style="background-color:#171a19; padding-top:28px; padding-right:32px; padding-bottom:40px; padding-left:32px;">
-<p style="margin-top:0; margin-right:0; margin-bottom:12px; margin-left:0; font-family:Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:13px; line-height:20px; font-weight:500; color:#c2c4c5;">Product update &middot; {{{RELEASE_DATE}}}</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:14px;"><tr>
+<td valign="middle" style="padding-right:9px; font-size:0; line-height:0;"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="8" height="8" bgcolor="#f8fafc" style="width:8px; height:8px; background-color:#f8fafc; border-radius:4px; font-size:0; line-height:0;">&nbsp;</td></tr></table></td>
+<td valign="middle" style="font-family:Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:13px; line-height:20px; font-weight:500; color:#c2c4c5;">{{{STATUS_LABEL}}} &middot; Product update &middot; {{{RELEASE_DATE}}}</td>
+</tr></table>
 <h1 style="margin:0; font-family:Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:36px; line-height:40px; font-weight:400; letter-spacing:-1.4px; color:#f8fafc;">{{{HEADLINE}}}</h1>
 <p style="margin-top:16px; margin-right:0; margin-bottom:0; margin-left:0; font-family:Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:17px; line-height:27px; font-weight:400; color:#c2c4c5;">{{{INTRO}}}</p>
 </td>
@@ -71,46 +62,6 @@
 <tr>
 <td bgcolor="#f8fafc" style="background-color:#f8fafc; border-radius:24px; padding-top:32px; padding-right:24px; padding-bottom:32px; padding-left:24px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-
-<!-- Status pill -->
-<tr>
-<td style="padding-bottom:16px;">
-<table role="presentation" cellpadding="0" cellspacing="0" border="0">
-<tr>
-<td bgcolor="{{{STATUS_BG}}}" style="background-color:{{{STATUS_BG}}}; border-radius:999px; padding-top:5px; padding-right:12px; padding-bottom:5px; padding-left:12px; font-family:Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:13px; line-height:18px; font-weight:600; color:{{{STATUS_COLOR}}};">{{{STATUS_LABEL}}}</td>
-</tr>
-</table>
-</td>
-</tr>
-
-<!-- Product card visual -->
-<tr>
-<td style="padding-bottom:32px;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr>
-<td bgcolor="#141416" style="background-color:#141416; border-radius:14px; padding-top:18px; padding-right:20px; padding-bottom:18px; padding-left:20px;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr>
-<td style="font-family:'IBM Plex Sans', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:15px; line-height:21px; font-weight:600; color:#ffffff;">{{{CARD_TITLE}}}</td>
-</tr>
-<tr>
-<td style="padding-top:4px; font-family:'IBM Plex Sans', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:13px; line-height:19px; font-weight:400; color:#b8b9bd;">{{{CARD_DETAIL}}}</td>
-</tr>
-<tr>
-<td style="padding-top:14px;">
-<table role="presentation" cellpadding="0" cellspacing="0" border="0">
-<tr>
-<td bgcolor="#2a2a30" style="background-color:#2a2a30; border-radius:6px; padding-top:4px; padding-right:10px; padding-bottom:4px; padding-left:10px; font-family:'IBM Plex Sans', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; font-size:12px; line-height:16px; font-weight:500; color:#ffffff;">{{{CARD_CHIP}}}</td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</td>
-</tr>
 
 <!-- How it works -->
 <tr>
