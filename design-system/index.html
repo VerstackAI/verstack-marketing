@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verstack Marketing Design System</title>
+<!-- The rendered catalog of the marketing design system. Everything on this page is
+     built live from the code in src/: tokens, components and the 50-clip motion library.
+     Open it straight from disk or from GitHub Pages; no server or build tool needed. -->
+<link rel="stylesheet" href="src/tokens.css">
+<link rel="stylesheet" href="catalog.css">
+<script src="src/tokens.js"></script>
+<script src="src/assets.js"></script>
+<script src="src/engine.js"></script>
+<script src="src/components.js"></script>
+<script src="src/runtime.js"></script>
+<script src="src/clips.js"></script>
+</head>
+<body>
+<header class="top">
+  <img class="lockup" src="../brand/logos/verstack-lockup-white.svg" alt="Verstack">
+  <nav>
+    <a href="#foundations">Foundations</a>
+    <a href="#components">Components</a>
+    <a href="#motion">Motion library</a>
+    <a href="#drawings">Drawings</a>
+    <a href="#product-ui">Product UI</a>
+    <a href="#layouts">Layouts</a>
+    <a href="#rules">Rules</a>
+  </nav>
+</header>
+
+<main>
+  <section class="intro">
+    <h1>Marketing design system</h1>
+    <p>Release videos, explainers, LinkedIn and email. Line drawings and real app screens on light cards over the dark ground, with one lime element at a time. Every clip below is running from the code in <code>design-system/src</code>.</p>
+  </section>
+
+  <section id="foundations">
+    <h2>Foundations</h2>
+    <p class="lead">Generated from <code>brand/tokens.json</code> by <code>build.py</code>. Change a value there, never here.</p>
+    <div class="panel"><h3>Colour</h3><div id="swatches" class="swatches"></div></div>
+    <div class="panel"><h3>Scan gradient</h3><div class="scan"></div><p class="note">From verstack.ai. Appears in one library clip (draw-building) as a faint 14% sweep. Never on tiles, never as a cut.</p></div>
+    <div class="panel"><h3>Frame</h3><div id="frame-tokens" class="tokens"></div></div>
+    <div class="panel"><h3>Type</h3>
+      <p class="type-d">Every unit, on one record.</p>
+      <p class="type-b">Inter for marketing. IBM Plex Sans appears only inside real app screens. Clips carry no type at all.</p>
+    </div>
+  </section>
+
+  <section id="components">
+    <h2>Components</h2>
+    <p class="lead">The parts every clip is built from, in <code>src/components.js</code>. Each one centres its imagery in its card and scales with the frame's short side.</p>
+    <div id="component-list" class="grid two"></div>
+  </section>
+
+  <section id="motion">
+    <h2>Motion library</h2>
+    <p class="lead">50 clips, imagery only. Click a clip to watch it large. MP4s are in <code>motion/out/</code>; render any size with <code>motion/render.py --size</code>.</p>
+    <div class="controls">
+      <div id="groups" class="chips"></div>
+      <label class="size">Frame
+        <select id="size">
+          <option value="1920x1080">1920 x 1080</option>
+          <option value="1080x1080">1080 x 1080</option>
+          <option value="1080x1350">1080 x 1350</option>
+        </select>
+      </label>
+    </div>
+    <div id="library" class="grid three"></div>
+  </section>
+
+  <section id="drawings">
+    <h2>Drawings</h2>
+    <p class="lead">Isometric hairline drawings from <code>illustrations/build.py</code>, light and dark. Lime parts are chosen per clip in <code>src/clips.js</code>.</p>
+    <div id="drawing-list" class="grid six"></div>
+  </section>
+
+  <section id="product-ui">
+    <h2>Product UI</h2>
+    <p class="lead">Captured from the running app by <code>product-ui/capture.py</code>. Shown exactly as captured: never redrawn or recoloured.</p>
+    <div id="pui-list" class="grid four"></div>
+  </section>
+
+  <section id="layouts">
+    <h2>Static layouts</h2>
+    <p class="lead">Post and email graphics from <code>templates/gen.py</code>. These carry the headline; the clips never do.</p>
+    <div id="layout-list" class="grid three"></div>
+  </section>
+
+  <section id="rules">
+    <h2>Rules</h2>
+    <div class="panel rules">
+      <ol>
+        <li>Clips are imagery only: no headlines, labels, callouts, numbers or keys. Text goes on in the edit or in the post.</li>
+        <li>Every drawing, phone and screen is centred both ways in its card.</li>
+        <li>One lime element on screen at a time: a lime part, the trace dot, or one ring.</li>
+        <li>Light cards on the dark ground, 16px seam, 40px corners at 1080p.</li>
+        <li>App UI is real captures only. Never redraw, recolour or edit a screen.</li>
+        <li>The scan gradient is rare: one faint sweep, never a cut, never on every card.</li>
+        <li>New clips go in <code>src/clips.js</code> and must pass <code>python3 design-system/scripts/verify.py</code>.</li>
+      </ol>
+      <p class="note">Full rules: <a href="RULES.md">RULES.md</a>. Component list: <a href="COMPONENT_INDEX.md">COMPONENT_INDEX.md</a>.</p>
+    </div>
+  </section>
+</main>
+<script src="catalog.js"></script>
+</body>
+</html>

@@ -11,15 +11,17 @@ Two kinds of picture carry the story:
 
 ## Principles
 
-**Light cards on the dark.** Every frame has at least one light card on the dark ground, like the cards on verstack.ai. Pictures go on the cards; headlines go on the dark.
+**Light cards on the dark.** Every frame has at least one light card on the dark ground, like the cards on verstack.ai.
 
-**Sparse and bold.** A big headline, one picture, two callouts at most. Nothing under 28 px. When in doubt, take something away.
+**Clips are pictures.** A motion clip is imagery only, centred in its card: a drawing drawing itself, a building opening, a phone screen changing. The words go on in the video edit or in the post, never inside the clip.
 
-**Fill the space.** Headlines are sized to their column. Under the headline sits a real app part or the supporting line, never an empty band.
+**Sparse and bold in stills.** A big headline, one picture, two callouts at most. Nothing under 28 px. Headlines fill their column; never an empty band under them.
 
-**One lime thing.** The lime part of a drawing or a ring around one app element. The scan gradient appears at most once per video, as a faint sweep.
+**One lime thing.** The lime part of a drawing, the trace dot, or a ring around one app element, one at a time. The scan gradient is rare: one faint sweep.
 
 **The app as it is.** App UI is captured, not drawn. It keeps the app's names, tokens and wording.
+
+**Code is the source.** Tokens, components and every clip are code in `design-system/src`, rendered live in the catalog and checked by `scripts/verify.py`.
 
 ## Foundations
 
@@ -51,9 +53,10 @@ Inter throughout marketing frames. IBM Plex Sans appears only inside app UI, bec
 
 ### Space and shape
 
-- 16 px of ground around and between cards. Cards 40 px radius, tiles 24 px.
-- 1920 x 1080: Light Card 1110 x 1048 at left, Type Column 600 px at right, starting 96 px from the top.
-- 1080 x 1350: Light Card across the top (about 830–880 px tall), headline below on the dark, lockup bottom left.
+- 16 px of ground around and between cards (the `seam` token). Cards 40 px radius at 1080p.
+- Clips: one card filling the frame, or a row or grid of cards (`VS.layout`). Imagery fills 68% of its card's height (at most 80% of its width) and sits dead centre; phones fill 86%.
+- Clips scale with the frame's short side, so the same clip renders at 1920 x 1080, 1080 x 1080 or 1080 x 1350.
+- Stills at 1920 x 1080: Light Card 1110 x 1048 at left, headline column 600 px at right. At 1080 x 1350: Light Card across the top, headline below on the dark.
 - Flat. No shadows.
 
 ## Drawings
@@ -67,15 +70,20 @@ Isometric, 1.25 px hairlines, faces filled with the surface they sit on, built b
 - **Desktop**: the web app in mock mode (`VITE_MOCK_API=true`), signed in with its built-in demo account. Screens at 2x, parts at 3x.
 - **Mobile**: the design canvas, each screen in its device shell at 3x.
 
-It writes `product-ui/anchors.json` with the boxes of named elements so a Ring or a callout can point at them. Re-run it when the app changes; never edit the images.
+It writes `product-ui/anchors.json` with the boxes of named elements so a Ring can land on them. Re-run it when the app changes; never edit the images.
 
-Use a Phone Shot or Board Shot on the Light Card, an App Part under the headline, and a Ring around the one element the story is about. Name what you show with the app's canonical names (see `COMPONENT_INDEX.md`).
+In clips, use a Phone or Screen centred on the Light Card and a Ring around the one element the story is about. In stills, an app part can also sit under the headline. Name what you show with the app's canonical names (see `COMPONENT_INDEX.md`).
 
 Design-canvas screens show designs; some features are not live. Check status before posting.
 
 ## Motion
 
-Moves: Draw, Explode, Highlight, Trace, plus the Screen Push for app UI and one optional Gradient Sweep. Ease `cubic-bezier(0.2, 0, 0, 1)`; draw 1.2–1.6 s; enter 480 ms with an 8–24 px rise; no bounce. Every clip is an HTML page with `renderAt(t)`, rendered to MP4 by `motion/render.py` at 30 fps.
+The library is 50 clips in seven families: Draw (20), Explode (3), Zoom (4), Trace (3), Swap (6), Tiles (6) and App (8). Each is a short definition in `src/clips.js` built from the components in `src/components.js` and the moves in `src/engine.js`.
+
+- Moves: Draw, Highlight, Explode, Assemble, Zoom, Trace, Swap, Rise, Push, Ring In. Ease `cubic-bezier(0.2, 0, 0, 1)`; no bounce.
+- Timing: a drawing draws on in 0.8–2.2 s depending on how many outlines it has; the lime part fills in 0.48 s; app UI rises 40 px in 0.7 s; every clip holds its last frame about 1.5 s.
+- Every clip exposes `renderAt(t)`. `player.html` plays one; `motion/render.py` steps it at 30 fps into an MP4; the catalog loops all of them.
+- `scripts/verify.py` checks every clip in a real browser: no text, imagery centred in every card, one lime element at a time.
 
 ## Voice
 
@@ -88,7 +96,9 @@ Headlines are claims in sentence case with a full stop. Sequence before benefit:
 | Tokens | `brand/tokens.json` (copy of the claude.ai design system) |
 | Drawings | `illustrations/` |
 | Still layouts | `templates/` |
-| Video | `motion/` |
+| Motion components, moves and the clip library | `design-system/src/` |
+| Catalog and player | `design-system/index.html`, `design-system/player.html` |
+| Rendered video | `motion/render.py` → `motion/out/` |
 | App UI images and anchors | `product-ui/` |
 | Release email | `email/`, Resend template `verstack-product-update` |
 | Rules and names | `design-system/` |

@@ -149,7 +149,7 @@ def main():
             web.wait_for_timeout(4000)
             w, h, b = web.evaluate(BOXES, ["body", boxes])
             web.screenshot(path=str(OUT / "desktop/screens" / f"{name}.png"))
-            anchors["desktop"][name] = {"size": [1440, 900], "scale": 2, "boxes": b}
+            anchors["desktop"][name] = {"size": [1440, 900], "scale": 2, "boxes": {**b, **FIXED_BOXES.get(name, {})}}
         # WHY: parts are shown large on their own, so they are captured at 3x; screens at 2x.
         part = browser.new_context(viewport={"width": 1440, "height": 900}, device_scale_factor=3).new_page()
         part.goto(WEB + "/home", wait_until="load", timeout=90000)

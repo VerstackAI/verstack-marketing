@@ -1,6 +1,18 @@
 # Changelog
 
-## 2026-11-19
+## 2026-11-19, motion library as code
+
+- The design system is now code: tokens (`src/tokens.css`, `src/tokens.js`, generated from `brand/tokens.json`), components (`src/components.js`), moves (`src/engine.js`) and the clip library (`src/clips.js`), with a live catalog (`index.html`) and a player (`player.html`).
+- Clips are imagery only. Headlines, supporting lines, callouts, the lockup and app parts were taken out of every clip; the imagery is centred in its card. Words go on in the edit or the post.
+- Motion library grown from 9 clips to 50 in seven families: Draw, Explode, Zoom, Trace, Swap, Tiles and App. The drawing moves from the first clips (draw, highlight, explode, trace, tiles) are all kept.
+- New moves: Assemble, Zoom (drawing camera with fixed 1.25 px hairlines), camera-follow Trace, Swap, lime walking across tiles, desktop screen zoom that never shows past the capture's edge, a screen push with a still status bar.
+- Every object drawing has a lime part chosen by anchor (dishwasher door, fridge freezer drawer, water heater rating plate and so on).
+- `scripts/verify.py` checks every clip: no text, imagery centred, one lime element at a time. All 50 pass.
+- `motion/render.py` renders from the player, at any size (`--size 1080x1080`) and in parallel (`--jobs`). Old per-clip pages and `motion/gen.py` removed.
+- Reports screen ring now lands on the first report row (the old "1 blocker" box was empty).
+- Added the `frame` token group (seam, card radius, fill, ring, sweep); removed the retired node-size token.
+
+## 2026-11-19, app UI
 
 - Added app UI to marketing graphics. `product-ui/capture.py` captures real screens and parts from the web app in mock mode and the mobile design canvas, with `product-ui/anchors.json` for rings and callouts.
 - Added Phone Shot, Board Shot, App Part, Ring and Screen Push.
