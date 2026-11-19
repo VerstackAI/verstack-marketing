@@ -77,7 +77,7 @@ Isometric, faces filled with the surface they sit on, built by `illustrations/bu
 `product-ui/capture.py` captures the running apps from a verstack-mvp checkout:
 
 - **Desktop**: the web app in mock mode (`VITE_MOCK_API=true`), signed in with its built-in demo account. Screens at 2x, parts at 3x.
-- **Mobile**: the design canvas, each screen in its device shell at 3x.
+- **Mobile**: the design canvas, each screen in its device shell at 3x. The canvas's home indicator and the shell's drop shadow are hidden before the shot (they are canvas chrome, not app UI), and everything outside the shell's rounded corners is transparent, so the phone sits cleanly on a light or dark card. `--mobile-only` re-captures just the phone screens and parts.
 
 It writes `product-ui/anchors.json` with the boxes of named elements so a Ring can land on them. Re-run it when the app changes; never edit the images.
 

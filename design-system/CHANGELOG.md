@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-19, clean phone screens
+
+- The six phone screens are re-captured without the design canvas's home indicator (the grey bar under the menu) and the shell's drop shadow. Everything outside the phone's rounded corners is now transparent, so no grey shows at the corners on any card.
+- `capture.py` does this on every run and has a `--mobile-only` option. App content and anchor boxes are unchanged.
+- The four phone clips (both modes) and the product phone still are re-rendered; all 100 clips pass.
+
 ## 2026-11-19, layering
 
 - The walk trail and its dot now sit in the unit plan's floor layer, so walls and furniture in front of them hide them. The rug and door swing moved below that layer.

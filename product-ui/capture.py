@@ -9,7 +9,12 @@ Start the two apps from a verstack-mvp checkout first:
   cd apps/web && VITE_MOCK_API=true npx vite --port 4670 --host 127.0.0.1
   cd apps/design-canvas && npx vite --port 4680 --host 127.0.0.1
 Then run: python3 product-ui/capture.py
+Add --mobile-only to re-capture the phone screens and parts and keep the desktop ones.
 Mock mode signs in with the app's built-in demo account; no real data is shown.
+
+Phone screens keep the app and the phone shell only: the canvas's home indicator and
+shell shadow are hidden before the shot, and everything outside the shell's rounded
+corners is made transparent, so no canvas background shows at the corners.
 """
 import json
 import pathlib
@@ -18,13 +23,16 @@ import sys
 import os
 import shutil
 
+from PIL import Image, ImageDraw
 from playwright.sync_api import sync_playwright
 
 # A local Chrome if there is one (set CHROME to choose), else Playwright's own Chromium.
 CHROME = os.environ.get("CHROME") or shutil.which("google-chrome") or shutil.which("chromium")
 
-WEB = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:4670"
-CANVAS = sys.argv[2] if len(sys.argv) > 2 else "http://127.0.0.1:4680"
+ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
+MOBILE_ONLY = "--mobile-only" in sys.argv
+WEB = ARGS[0] if len(ARGS) > 0 else "http://127.0.0.1:4670"
+CANVAS = ARGS[1] if len(ARGS) > 1 else "http://127.0.0.1:4680"
 OUT = pathlib.Path(__file__).resolve().parent
 for d in ("desktop/screens", "desktop/parts", "mobile/screens", "mobile/parts"):
     (OUT / d).mkdir(parents=True, exist_ok=True)
@@ -85,6 +93,20 @@ SHOW_FRAME = """
   c.style.transform = `translate(${-(r.x - cr.x) + 500}px, ${-(r.y - cr.y) + 60}px) scale(1)`;
 }
 """
+# WHY: the home indicator and the shell's drop shadow are canvas chrome, not app UI. The
+# indicator is the only absolute bar of its size in the frame (iOS 144 x 5, Android 108 x 4).
+CLEAN_FRAME = """
+(i) => {
+  const el = document.querySelector(`[data-shot="${i}"]`);
+  el.style.boxShadow = 'none';
+  el.querySelectorAll('div').forEach((d) => {
+    const cs = getComputedStyle(d); const r = d.getBoundingClientRect();
+    const bar = (Math.round(r.width) === 144 && Math.round(r.height) === 5) || (Math.round(r.width) === 108 && Math.round(r.height) === 4);
+    if (bar && cs.position === 'absolute' && cs.pointerEvents === 'none') d.style.display = 'none';
+  });
+  return parseFloat(getComputedStyle(el).borderTopLeftRadius);
+}
+"""
 BOXES = """
 ([rootSel, anchors]) => {
   const root = document.querySelector(rootSel); const rr = root.getBoundingClientRect(); const out = {};
@@ -118,8 +140,27 @@ PART = """
 """
 
 
+def clip_to_shell(path, radius):
+    """Make everything outside the phone shell's rounded rectangle transparent.
+
+    Args:
+        path: The captured screen PNG; the image is exactly the shell's bounding box.
+        radius: The shell's corner radius in image pixels.
+    """
+    shot = Image.open(path).convert("RGBA")
+    w, h = shot.size
+    # WHY: drawn at 4x and scaled down so the corner edge is anti-aliased, not stepped.
+    big = Image.new("L", (w * 4, h * 4), 0)
+    ImageDraw.Draw(big).rounded_rectangle([0, 0, w * 4 - 1, h * 4 - 1], radius=radius * 4, fill=255)
+    shell_mask = big.resize((w, h), Image.LANCZOS)
+    shot.putalpha(shell_mask)
+    shot.save(path)
+
+
 def main():
     anchors = {"mobile": {}, "desktop": {}}
+    if MOBILE_ONLY:
+        anchors["desktop"] = json.loads((OUT / "anchors.json").read_text())["desktop"]
     with sync_playwright() as p:
         browser = p.chromium.launch(**({"executable_path": CHROME} if CHROME else {}))
         mob = browser.new_context(viewport={"width": 1000, "height": 1040}, device_scale_factor=3).new_page()
@@ -128,9 +169,12 @@ def main():
             mob.wait_for_timeout(3500)
             mob.evaluate(FIND_FRAMES)
             mob.evaluate(SHOW_FRAME, i)
+            shell_radius = mob.evaluate(CLEAN_FRAME, i)
             mob.wait_for_timeout(300)
             w, h, b = mob.evaluate(BOXES, [f'[data-shot="{i}"]', boxes])
-            mob.locator(f'[data-shot="{i}"]').screenshot(path=str(OUT / "mobile/screens" / f"{name}.png"))
+            shot_path = OUT / "mobile/screens" / f"{name}.png"
+            mob.locator(f'[data-shot="{i}"]').screenshot(path=str(shot_path), omit_background=True)
+            clip_to_shell(shot_path, shell_radius * 3)
             anchors["mobile"][name] = {"size": [w, h], "scale": 3, "boxes": b}
         for area, i, text, mw, mh, name in MOBILE_PARTS:
             mob.goto(f"{CANVAS}/?area={area}", wait_until="load", timeout=90000)
@@ -141,6 +185,11 @@ def main():
             if mob.evaluate(PART, [f'[data-shot="{i}"]', text, mw, mh, 10000]):
                 mob.locator('[data-crop="1"]').first.screenshot(path=str(OUT / "mobile/parts" / f"{name}.png"))
 
+        if MOBILE_ONLY:
+            browser.close()
+            (OUT / "anchors.json").write_text(json.dumps(anchors, indent=1))
+            print("captured the mobile screens and parts")
+            return
         web = browser.new_context(viewport={"width": 1440, "height": 900}, device_scale_factor=2).new_page()
         web.goto(WEB + "/home", wait_until="load", timeout=90000)
         web.wait_for_timeout(5000)
