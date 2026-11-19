@@ -13,18 +13,25 @@ VS.base = VS.base || "../";
   const LIME_RE = /#a5fc22|#7ff553|#8ff741/i;
 
   /** Light and dark modes. Light: light cards on the dark ground. Dark: dark scene cards
-      (the website's scene-dark) on the same ground, drawn in light lines. `map` recolours the
-      drawings' source colours (the light SVGs, and the website phone's silver tones). */
+      (the website's scene-dark) on the same ground, drawn in light lines. Drawings are toned
+      like the phone on verstack.ai; `roles` gives each drawn role its colour in the mode
+      (tones from brand/tokens.json tone-*), `map` recolours the website phone's own colours. */
+  const T = (n) => VS.tokens[n];
+  const roles = (mode, ink, muted) => ({
+    top: T(`tone-top-${mode}`), left: T(`tone-left-${mode}`), right: T(`tone-right-${mode}`),
+    side: T(`tone-side-${mode}`), accent: T(`tone-accent-${mode}`), bg: T(`tone-top-${mode}`),
+    stroke: ink, muted, hi_stroke: ink, hi_top: "#a5fc22", hi_l: "#7ff553", hi_r: "#8ff741",
+  });
   const THEMES = {
     light: {
-      name: "light", ground: "#171a19", card: MIST, face: MIST, ink: INK, edge: INK, dot: INK, limeStroke: null,
-      map: {},
+      name: "light", ground: "#171a19", card: MIST, ink: INK, edge: INK, dot: INK, limeStroke: null,
+      roles: roles("light", INK, "#9a9aa3"), map: {},
     },
     dark: {
-      name: "dark", ground: "#171a19", card: "#141416", face: "#141416", ink: MIST, edge: "rgb(248 250 252 / 0.24)", dot: "#141416", limeStroke: "#141416",
+      name: "dark", ground: "#171a19", card: "#141416", ink: MIST, edge: "rgb(248 250 252 / 0.24)", dot: "#141416", limeStroke: "#141416",
       cardEdge: "rgb(248 250 252 / 0.08)",
+      roles: roles("dark", MIST, "#8b8f8d"),
       map: {
-        "#f8fafc": "#141416", "#30303a": MIST, "#9a9aa3": "#8b8f8d",
         "#b7b5af": "#3a3e3c", "#cecdcb": "#2a2e2c", "#3f3e3e": "#0c0d0d", "#ffffff": "#1e1e22",
         "#2c292a": MIST, "#282828": MIST, "#525151": "#c2c4c5", "#706f6e": "#8b8f8d",
       },
@@ -127,7 +134,6 @@ VS.base = VS.base || "../";
 
     const theme = card.theme || THEMES.light;
     d.theme = theme;
-    d.ground = theme.face;
     const SHAPES = "polygon,polyline,line,path,ellipse,circle";
     const shapes = [...svg.querySelectorAll(SHAPES)];
     // Line weight follows the website phone: proportional to the drawing's size on screen,
@@ -137,9 +143,14 @@ VS.base = VS.base || "../";
     const L = Math.min(2.8 * u, Math.max(1.7 * u, 0.003 * size));
     const swMax = Math.max(...shapes.map((n) => parseFloat(n.getAttribute("stroke-width") || 1)));
     d.items = shapes.map((node) => {
-      // Theme: recolour the source colours (fills, strokes, and a lime part's pre-light colour).
-      ["fill", "stroke"].forEach((attr) => { const c = node.getAttribute(attr); if (c) node.setAttribute(attr, recolor(theme, c)); });
-      if (node.dataset.ground) node.dataset.ground = recolor(theme, node.dataset.ground);
+      // Mode: colour each element by its role (data-f fill, data-s stroke); elements without a
+      // role (the website phone) by their own colour. A lime part's pre-light colour likewise.
+      const r = theme.roles;
+      if (node.dataset.f) node.setAttribute("fill", r[node.dataset.f]);
+      else if (node.getAttribute("fill")) node.setAttribute("fill", recolor(theme, node.getAttribute("fill")));
+      if (node.dataset.s) node.setAttribute("stroke", r[node.dataset.s]);
+      else if (node.getAttribute("stroke")) node.setAttribute("stroke", recolor(theme, node.getAttribute("stroke")));
+      if (node.dataset.ground) node.dataset.ground = r[node.dataset.ground] || recolor(theme, node.dataset.ground);
       node.setAttribute("vector-effect", "non-scaling-stroke");
       node.style.strokeWidth = px(L * parseFloat(node.getAttribute("stroke-width") || 1) / swMax);
       const len = node.getTotalLength() * d.kk + 2;
@@ -151,8 +162,10 @@ VS.base = VS.base || "../";
     });
     const asLime = (it, fillColour) => {
       it.limeFill = fillColour;
-      it.groundFill = it.el.dataset.ground || (it.fill !== "none" ? it.fill : theme.face);
-      it.el.style.fill = it.groundFill;
+      // An outline-only part (a door panel drawn on a face) stays clear until it lights.
+      it.clear = !it.el.dataset.ground && it.fill === "none";
+      it.groundFill = it.el.dataset.ground || it.fill;
+      if (!it.clear) it.el.style.fill = it.groundFill;
       // The lines drawn on top of the part (a handle, window frames): in dark mode they turn
       // dark with it, or they would vanish into the lime.
       const i = d.items.indexOf(it);
@@ -164,7 +177,7 @@ VS.base = VS.base || "../";
       d.limeItems.push(it);
     };
     // WHY: the built-in lime part starts as its ground so it reads as a normal face until the highlight.
-    d.items.forEach((it) => { if (LIME_RE.test(it.fill)) { it.fill = theme.face; asLime(it, it.el.getAttribute("fill")); } });
+    d.items.forEach((it) => { if (LIME_RE.test(it.fill)) { const c = it.fill; it.fill = it.el.dataset.ground || theme.roles.top; asLime(it, c); } });
 
     /** Make the part under an anchor the lime part: the smallest closed shape containing it
         (a door panel, a dial, a drawer), filled or outline only. */
@@ -188,7 +201,7 @@ VS.base = VS.base || "../";
       const x1 = Math.max(...bs.map((b) => b.x + b.width)), y1 = Math.max(...bs.map((b) => b.y + b.height));
       return [(x0 + x1) / 2, (y0 + y1) / 2];
     };
-    if (limeOff || lime) { d.limeItems.forEach((it) => { it.el.style.fill = it.groundFill; }); d.limeItems = []; }
+    if (limeOff || lime) { d.limeItems.forEach((it) => { if (!it.clear) it.el.style.fill = it.groundFill; }); d.limeItems = []; }
     if (lime) d.part(lime);
     return d;
   }

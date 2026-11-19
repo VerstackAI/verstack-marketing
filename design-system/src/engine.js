@@ -48,7 +48,8 @@ window.VS = window.VS || {};
   function lime(d, t, t0 = Infinity, t1 = Infinity) {
     const h = ease(prog(t, t0, 0.48)) * (1 - ease(prog(t, t1, 0.4)));
     d.limeItems.forEach((it) => {
-      it.el.style.fill = mix(it.groundFill, it.limeFill, h);
+      if (it.clear) { it.el.style.fill = it.limeFill; it.el.style.fillOpacity = h; }
+      else it.el.style.fill = mix(it.groundFill, it.limeFill, h);
       // Dark mode: the lit part's outline turns dark so the lime keeps its edge.
       if (d.theme.limeStroke) {
         if (it.stroke && it.stroke[0] === "#") it.el.style.stroke = mix(it.stroke, d.theme.limeStroke, h);

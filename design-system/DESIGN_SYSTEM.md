@@ -36,6 +36,7 @@ Two kinds of picture carry the story:
 | `ink-500` | `#6d6d78` | The line under a callout name on a Light Card |
 | `lime-electric` | `#a5fc22` | The one lime element |
 | `card-dark` | `#141416` | Dark mode card (the website's scene-dark) |
+| `tone-top` / `tone-left` / `tone-right` / `tone-side` / `tone-accent` | light `#ffffff` `#ecebe7` `#d6d5d0` `#e1e0dc` `#3f3e3e`; dark `#2d3130` `#232726` `#1a1d1c` `#1e2120` `#0b0c0c` | Face tones of drawings |
 | `scan-1`…`scan-7` | `#f8fafc` → `#7ff553` | The gradient sweep only |
 
 Full values are in `brand/tokens.json`. The app's own semantic tokens (slate structure, status colours) stay inside the app UI images.
@@ -62,12 +63,13 @@ Inter throughout marketing frames. IBM Plex Sans appears only inside app UI, bec
 
 ## Drawings
 
-Isometric, faces filled with the surface they sit on, built by `illustrations/build.py` so every line matches. 21 public drawings, dark and light. One Lime Part per drawing that has a subject.
+Isometric, faces filled with the surface they sit on, built by `illustrations/build.py` so every line matches. 21 public drawings, dark and light. One Lime Part per drawing that has a subject: a small piece, at most 20% of the drawing (a display, a burner ring, a dispenser, a filter slot).
 
 - **Line weight** follows the isometric phone on verstack.ai (0.5 contour, 0.3 inside on a 198-unit drawing): proportional to the drawing's size on screen, with each solid's outer contour about 1.6 times the weight of the lines inside it. In clips the weight is set from the drawing's size: 0.3% of its longer side, 1.7 to 2.8 px at 1080p.
+- **Tones**: faces are filled with flat tones like the phone on verstack.ai, by which way they face: top (`tone-top`, lightest), turned left (`tone-left`), turned right (`tone-right`, darker), curved sides (`tone-side`), and a dark `tone-accent` for glass and displays (oven window, washer glass, laptop bezel, thermostat display, fridge dispenser, dishwasher display, smoke detector sensor). Light and dark mode each have their own values. No gradients, no shading beyond the face tones.
 - **Rounding**: appliance boxes have softly rounded vertical corners (0.22 units on a 6-unit appliance), with no crease line where the corner turns. Buildings, plans, ladders and paint stay square.
 - **The phone** is the website's own isometric phone (`illustrations/sources/phone-site.svg`, from `public/media/phones/iphone-outline.svg` on the site), with its silver, rim and bezel tones, plus the capture record button as its lime part.
-- **Modes**: clips recolour the light source drawings at runtime. Dark mode maps faces to `card-dark`, lines to mist and the phone's tones to darker ones.
+- **Modes**: every element of a drawing carries its role (`data-f` for its fill tone, `data-s` for its stroke). Clips recolour by role for the mode; the website phone's own colours are mapped by value.
 
 ## App UI
 

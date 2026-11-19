@@ -1,19 +1,35 @@
 """Small isometric line-drawing engine for Verstack illustrations.
 
-Draws hairline isometric solids as SVG. Faces are filled with the ground colour so
-nearer solids hide farther lines (painter's order: add far things first). One
-optional lime highlight per drawing. No shading, no gradients.
+Draws isometric solids as SVG, toned like the phone on verstack.ai: top faces lightest,
+faces turned left a light grey, faces turned right a darker grey, curved sides between,
+and a dark accent for glass and displays. Faces are opaque so nearer solids hide farther
+lines (painter's order: add far things first). One optional lime highlight per drawing.
+Flat tones only, no gradients. Tone values come from brand/tokens.json (tone-*).
+
+Every element carries its role (data-f for the fill, data-s for the stroke) so the motion
+code can recolour a drawing for light or dark mode.
 """
+import json
 import math
+import pathlib
 
 C30 = math.cos(math.radians(30))
 S30 = math.sin(math.radians(30))
 
 THEMES = {
-    # stroke on ground, faces filled with the ground they sit on
-    "dark": {"bg": "#171a19", "stroke": "#f8fafc", "muted": "#8b8f8d", "hi_top": "#a5fc22", "hi_l": "#7ff553", "hi_r": "#8ff741", "hi_stroke": "#171a19"},
-    "light": {"bg": "#f8fafc", "stroke": "#30303a", "muted": "#9a9aa3", "hi_top": "#a5fc22", "hi_l": "#7ff553", "hi_r": "#8ff741", "hi_stroke": "#30303a"},
+    # strokes and the lime part; tones are added from the tokens below
+    "dark": {"stroke": "#f8fafc", "muted": "#8b8f8d", "hi_top": "#a5fc22", "hi_l": "#7ff553", "hi_r": "#8ff741", "hi_stroke": "#141416"},
+    "light": {"stroke": "#30303a", "muted": "#9a9aa3", "hi_top": "#a5fc22", "hi_l": "#7ff553", "hi_r": "#8ff741", "hi_stroke": "#30303a"},
 }
+_TOK = {t["name"]: t["value"] for t in json.loads((pathlib.Path(__file__).resolve().parent.parent / "brand" / "tokens.json").read_text())["color"]["tokens"]}
+for _theme in THEMES:
+    for _role in ("top", "left", "right", "side", "accent"):
+        THEMES[_theme][_role] = _TOK[f"tone-{_role}"][_theme]
+    THEMES[_theme]["bg"] = THEMES[_theme]["top"]
+TONES = {"bg", "top", "left", "right", "side", "accent", "hi_top", "hi_l", "hi_r"}
+STROKES = {"stroke", "muted", "hi_stroke"}
+# What a lime face shows before it lights: the tone of the face it sits on.
+HI_GROUND = {"hi_l": "left", "hi_r": "right", "hi_top": "top"}
 
 
 def proj(x, y, z, s):
@@ -76,9 +92,16 @@ class Drawing:
         return X, Y
 
     def _attrs(self, fill, stroke, sw, dash=None):
+        roles = ""
+        if fill in TONES:
+            roles += f' data-f="{fill}"'
+        if fill in HI_GROUND:
+            roles += f' data-ground="{HI_GROUND[fill]}"'
+        if stroke in STROKES:
+            roles += f' data-s="{stroke}"'
         fill = self.t.get(fill, fill) if fill else "none"
         stroke = self.t.get(stroke, stroke) if stroke else "none"
-        a = f'fill="{fill}" stroke="{stroke}" stroke-width="{sw or self.sw}" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"'
+        a = f'fill="{fill}" stroke="{stroke}" stroke-width="{sw or self.sw}" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"{roles}'
         if dash:
             a += f' stroke-dasharray="{dash}"'
         return a
@@ -130,10 +153,19 @@ class Drawing:
         x1, y1, z1 = x + w, y + d, z + h
         st = stroke or ("hi_stroke" if hi else "stroke")
         r = min(self.round, 0.18 * min(w, d))
+        toned = fill == "bg"
         if r > 0.05 and min(w, d) >= 1.0 and not hi:
-            self.slab(rounded_rect(x, y, x1, y1, r), z, z1, fill, stroke=st)
+            foot = rounded_rect(x, y, x1, y1, r)
+            sil = hull([proj(*p, self.s) for p in [(a, b, z) for a, b in foot] + [(a, b, z1) for a, b in foot]])
+            self.poly2(sil, "side" if toned else fill, None)
+            if toned:
+                # the flat parts of the two faces; the rounded corners keep the side tone
+                self.poly3([(x + r, y1, z), (x1 - r, y1, z), (x1 - r, y1, z1), (x + r, y1, z1)], "left", None)
+                self.poly3([(x1, y + r, z), (x1, y1 - r, z), (x1, y1 - r, z1), (x1, y + r, z1)], "right", None)
+            self.poly3([(a, b, z1) for a, b in foot], "top" if toned else fill, st)
+            self.poly2(sil, None, st, self.sw * self.sil)
             return
-        f_l, f_r, f_t = ("hi_l", "hi_r", "hi_top") if hi else (fill, fill, fill)
+        f_l, f_r, f_t = ("hi_l", "hi_r", "hi_top") if hi else (("left", "right", "top") if toned else (fill, fill, fill))
         # face looking down-left (y = y1)
         self.poly3([(x, y1, z), (x1, y1, z), (x1, y1, z1), (x, y1, z1)], f_l, st)
         # face looking down-right (x = x1)
@@ -148,23 +180,23 @@ class Drawing:
         bottom = [(x, y, z0) for x, y in foot]
         top = [(x, y, z1) for x, y in foot]
         sil = hull([proj(*p, self.s) for p in bottom + top])
-        self.poly2(sil, "hi_l" if hi else fill, st, self.sw * self.sil)
-        self.poly3(top, "hi_top" if hi else fill, st)
+        self.poly2(sil, "hi_l" if hi else ("side" if fill == "bg" else fill), st, self.sw * self.sil)
+        self.poly3(top, "hi_top" if hi else ("top" if fill == "bg" else fill), st)
 
     def cylinder_z(self, cx, cy, r, z0, z1, fill="bg", stroke="stroke", n=72, top=True):
         """Upright cylinder."""
         circ = lambda z: [(cx + r * math.cos(2 * math.pi * i / n), cy + r * math.sin(2 * math.pi * i / n), z) for i in range(n)]
         sil = hull([proj(*p, self.s) for p in circ(z0) + circ(z1)])
-        self.poly2(sil, fill, stroke, self.sw * self.sil)
+        self.poly2(sil, "side" if fill == "bg" else fill, stroke, self.sw * self.sil)
         if top:
-            self.poly3(circ(z1), fill, stroke)
+            self.poly3(circ(z1), "top" if fill == "bg" else fill, stroke)
 
     def cylinder_x(self, cy, cz, r, x0, x1, fill="bg", stroke="stroke", n=72):
         """Cylinder lying along x (e.g. a battery cell)."""
         circ = lambda x: [(x, cy + r * math.cos(2 * math.pi * i / n), cz + r * math.sin(2 * math.pi * i / n)) for i in range(n)]
         sil = hull([proj(*p, self.s) for p in circ(x0) + circ(x1)])
-        self.poly2(sil, fill, stroke, self.sw * self.sil)
-        self.poly3(circ(x1), fill, stroke)
+        self.poly2(sil, "side" if fill == "bg" else fill, stroke, self.sw * self.sil)
+        self.poly3(circ(x1), "right" if fill == "bg" else fill, stroke)
 
     def circle_on(self, plane, c, r, fill=None, stroke="stroke", sw=None, n=64):
         """Circle lying in a plane: 'z' (horizontal), 'x' or 'y' (vertical faces)."""

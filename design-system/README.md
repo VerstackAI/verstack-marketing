@@ -25,7 +25,7 @@ The catalog shows the tokens, every component working, all 50 motion clips playi
 | `src/runtime.js` | The clip registry, `VS.mount` and `VS.play` |
 | `src/clips.js` | The 50-clip motion library |
 | `build.py` | Writes the generated files in `src/` |
-| `scripts/verify.py` | Checks every clip against the motion rules in a real browser |
+| `scripts/verify.py` | Checks every clip in both modes in a real browser: no text, centred, one lime element, lime part at most 20% of its drawing |
 | `RULES.md`, `COMPONENT_INDEX.md`, `DESIGN_SYSTEM.md`, `CHANGELOG.md`, `AGENT_CONTEXT.md` | Rules, canonical names, principles, history, agent notes |
 
 ## Add a clip

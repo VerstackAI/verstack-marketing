@@ -13,11 +13,14 @@
 
   // The part of each object drawing that turns lime (an anchor in illustrations/anchors.json).
   // building, building-floors, unit-plan and phone carry their own lime part.
+  // The part of each object drawing that turns lime (an anchor in illustrations/anchors.json).
+  // Small on purpose: a lime part covers at most a fifth of its drawing (verify.py checks).
+  // building, building-floors, unit-plan and phone carry their own lime part.
   const PART = {
-    dishwasher: "door", fridge: "freezer", range: "oven", "washer-dryer": "washer", vanity: "basin",
-    toilet: "tank", "water-heater": "plate", furnace: "filter", condenser: "panel", "rooftop-unit": "hood",
+    dishwasher: "display", fridge: "dispenser", range: "hob", "washer-dryer": "washer", vanity: "basin",
+    toilet: "seat", "water-heater": "plate", furnace: "filter", condenser: "fan-ring", "rooftop-unit": "hood",
     "electrical-panel": "main", thermostat: "dial", "smoke-detector": "sensor", ladder: "top",
-    toolbox: "handle", paint: "can", laptop: "screen",
+    toolbox: "handle", paint: "can", laptop: "trackpad",
   };
   const NAME = {
     building: "Building", "unit-plan": "Unit plan", dishwasher: "Dishwasher", fridge: "Fridge", range: "Range",

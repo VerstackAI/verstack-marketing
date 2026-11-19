@@ -54,6 +54,16 @@
   --ui-warning: #96610a;
   --ui-warning-bg: #fdf3dd;
   --ui-caution: #f5b400;
+  --tone-top-light: #ffffff;
+  --tone-top-dark: #2d3130;
+  --tone-left-light: #ecebe7;
+  --tone-left-dark: #232726;
+  --tone-right-light: #d6d5d0;
+  --tone-right-dark: #1a1d1c;
+  --tone-side-light: #e1e0dc;
+  --tone-side-dark: #1e2120;
+  --tone-accent-light: #3f3e3e;
+  --tone-accent-dark: #0b0c0c;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;

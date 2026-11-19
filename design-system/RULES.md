@@ -5,7 +5,7 @@ These rules apply to every release email image, LinkedIn post, release video and
 ## Everything
 
 1. Cards on the dark ground (`ground-900`), with 16 px of ground showing around and between them. Every clip comes in two modes: light (mist cards, ink lines) and dark (`card-dark` cards with a faint edge, mist lines). Stills use light cards.
-2. One lime element on screen at a time: the lime part of a drawing, the trace dot, or a ring around one real app element. Nothing else is lime.
+2. One lime element on screen at a time: the lime part of a drawing, the trace dot, or a ring around one real app element. Nothing else is lime. A lime part is a small piece (a display, a burner, a dispenser) and covers at most 20% of its drawing.
 3. No index numbers or section keys ("1.0", "1.1", "01"), no numbered badges, no square nodes, no grids or plus marks, no file-name title bars, no corner meta lines, no monospace type.
 4. The scan gradient is rare: one faint sweep (14% opacity) across a card. Never held on screen, never on every card, never as the cut between beats.
 5. App UI is the real app. Every phone screen, board and card comes from `product-ui/`, captured from the running apps with `product-ui/capture.py`. Never redraw, restyle or retouch app UI, and never invent screens.
@@ -13,7 +13,7 @@ These rules apply to every release email image, LinkedIn post, release video and
 7. Status is honest: Live, Rolling out or In pilot, in words. A screen from the design canvas is a design until the feature ships; check before posting it.
 8. Sample data only (Maple Court, King West Residences, Unit 4B). Never a customer's.
 9. Planned hardware stays private until announced.
-10. Line weight follows the isometric phone on verstack.ai: proportional to the drawing's size, outer contour heavier than the lines inside it. Never a uniform hairline. Appliances have softly rounded corners; buildings and plans stay square.
+10. Drawings follow the isometric phone on verstack.ai: line weight proportional to the drawing's size, outer contour heavier than the lines inside it, and flat tones on the faces (top lightest, faces turned left light grey, faces turned right darker, curved sides between, a dark accent for glass and displays). Each mode has its own tone values (`tone-*` tokens). Never a uniform hairline, never an untoned outline drawing. Appliances have softly rounded corners; buildings and plans stay square.
 11. The phone is the website's phone (`illustrations/sources/phone-site.svg`). Never draw another.
 
 ## Motion clips
@@ -38,13 +38,13 @@ These rules apply to every release email image, LinkedIn post, release video and
 - Text of any kind inside a motion clip.
 - Imagery placed off centre in its card.
 - A uniform hairline, or a phone drawn any other way than the website's.
-- Two lime elements on screen at once.
+- Two lime elements on screen at once, or a lime part bigger than a fifth of its drawing (a whole oven door, a whole face).
 - App UI drawn by hand, recoloured, or cropped so a component reads as something else.
 - "AI-powered", deposit, chargeback or deposit recovery.
 
 ## Review checklist
 
-- `python3 design-system/scripts/verify.py` passes in both modes (clips).
+- `python3 design-system/scripts/verify.py` passes in both modes (clips), including the 20% lime check.
 - One lime element at a time.
 - Imagery centred in every card.
 - No text in a clip; every word 28 px or larger in a still.

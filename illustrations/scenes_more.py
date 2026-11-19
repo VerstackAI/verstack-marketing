@@ -16,7 +16,7 @@ def fridge(d):
     d.rect_on("y", D, 2.55, 8.2, 2.72, 11.6)
     d.rect_on("y", D, 3.28, 8.2, 3.45, 11.6)
     d.rect_on("y", D, 1.6, 4.75, 4.4, 4.95)
-    d.rect_on("y", D, 0.75, 8.6, 1.95, 10.8)
+    d.rect_on("y", D, 0.75, 8.6, 1.95, 10.8, fill="accent")
     d.line3((0.95, D, 9.2), (1.75, D, 9.2), stroke="muted", sw=1)
     for u in (0.6, 1.2, 1.8, 2.4, 3.0, 3.6, 4.2, 4.8, 5.4):
         d.line3((u, D, 0.12), (u + 0.3, D, 0.12 + 0.36), stroke="muted", sw=1)
@@ -34,13 +34,14 @@ def range_stove(d):
     d.rect_on("y", 0.6, 2.4, H + 0.55, 3.6, H + 1.15)
     d.box(0, 0.6, 0, W, D - 0.6, H)
     d.rect_on("y", D, 0.2, 0.75, W - 0.2, 5.7)
-    d.rect_on("y", D, 0.9, 2.0, W - 0.9, 4.7, stroke="muted")
+    d.rect_on("y", D, 0.9, 2.0, W - 0.9, 4.7, fill="accent", stroke="muted")
     d.rect_on("y", D, 1.4, 5.15, 4.6, 5.35)
     d.rect_on("y", D, 0.2, 0.08, W - 0.2, 0.62)
     for (cx, cy, r) in ((1.5, 1.85, 0.85), (4.5, 1.85, 0.7), (1.5, 4.1, 0.7), (4.5, 4.1, 0.85)):
         d.circle_on("z", (cx, cy, H), r)
         d.circle_on("z", (cx, cy, H), r * 0.45, stroke="muted", sw=1)
     d.anchor("burner", (1.5, 1.85, H))
+    d.anchor("hob", (2.1, 1.85, H))  # inside the burner ring, outside its centre: the whole ring
     d.anchor("oven", (3.0, D, 3.3))
 
 
@@ -52,7 +53,7 @@ def washer_dryer(d):
         d.rect_on("y", D, 0.5, z0 + H - 0.95, 2.2, z0 + H - 0.4, stroke="muted")
         d.circle_on("y", (4.6, D, z0 + H - 0.67), 0.24)
         d.circle_on("y", (3.0, D, z0 + 2.65), 1.95)
-        d.circle_on("y", (3.0, D, z0 + 2.65), 1.45, stroke="muted", sw=1)
+        d.circle_on("y", (3.0, D, z0 + 2.65), 1.45, fill="accent", stroke="muted", sw=1)
         if k == 0:
             d.rect_on("y", D, 4.8, z0 + 0.25, 5.6, z0 + 0.65)
     d.anchor("washer", (3.0, D, 2.65))
@@ -127,7 +128,7 @@ def thermostat(d):
     d.box(0.45, 0.3, 0.45, 3.5, 0.45, 3.5)
     d.circle_on("y", (2.2, 0.75, 2.2), 1.45)
     d.circle_on("y", (2.2, 0.75, 2.2), 1.05, stroke="muted", sw=1)
-    d.rect_on("y", 0.75, 1.6, 2.0, 2.8, 2.5)
+    d.rect_on("y", 0.75, 1.6, 2.0, 2.8, 2.5, fill="accent")
     d.anchor("dial", (2.2, 0.75, 2.2))
 
 
@@ -139,7 +140,7 @@ def smoke_detector(d):
     for a in range(0, 360, 30):
         ca, sa = math.cos(math.radians(a)), math.sin(math.radians(a))
         d.line3((1.25 * ca, 1.25 * sa, 1.0), (1.75 * ca, 1.75 * sa, 1.0), stroke="muted", sw=1)
-    d.circle_on("z", (0, 0, 1.0), 0.35)
+    d.circle_on("z", (0, 0, 1.0), 0.35, fill="accent")
     d.anchor("sensor", (0, 0, 1.0))
 
 
@@ -222,8 +223,8 @@ def paint(d):
 
 def laptop(d):
     W, D = 8, 5.6
-    d.quad([(0, 0.2, 0.3), (W, 0.2, 0.3), (W, -0.9, 5.5), (0, -0.9, 5.5)])
-    d.quad([(0.35, 0.12, 0.75), (W - 0.35, 0.12, 0.75), (W - 0.35, -0.82, 5.15), (0.35, -0.82, 5.15)], stroke="muted")
+    d.quad([(0, 0.2, 0.3), (W, 0.2, 0.3), (W, -0.9, 5.5), (0, -0.9, 5.5)], fill="accent")
+    d.quad([(0.35, 0.12, 0.75), (W - 0.35, 0.12, 0.75), (W - 0.35, -0.82, 5.15), (0.35, -0.82, 5.15)], fill="top", stroke="muted")
     for i, (x0, x1) in enumerate(((0.9, 4.2), (0.9, 6.6), (0.9, 6.6), (0.9, 5.4))):
         f = 0.2 + i * 0.18
         z = 0.75 + (5.15 - 0.75) * (1 - f)
@@ -236,6 +237,7 @@ def laptop(d):
         d.line3((0.7, y, 0.3), (W - 0.7, y, 0.3), stroke="muted", sw=1)
     d.rect_on("z", 0.3, 2.9, 3.6, 5.1, 5.2)
     d.anchor("screen", (4.0, -0.4, 3.4))
+    d.anchor("trackpad", (4.0, 4.4, 0.3))
 
 
 def building_floors(d, hi=True):

@@ -19,7 +19,7 @@ Use these names exactly in briefs, reviews and changelog entries. Every motion c
 | Light Card | `Card(frame, box)` | Mist surface, 40 px radius at 1080p, clipping what it holds |
 | Layer | `Layer(card)` | A full-card layer, so one card can swap one drawing for the next |
 | Drawing | `Drawing(card, name, opts)` | A line drawing centred in its card, recoloured for the mode. Its SVG viewBox is the camera. Line weight from its size on screen, contour heaviest |
-| Lime Part | `Drawing(..., { lime: anchor })`, `d.part(anchor)` | The smallest closed shape under an anchor (a door panel, a dial, a drawer), filled lime when highlighted. Building, unit plan and phone carry their own |
+| Lime Part | `Drawing(..., { lime: anchor })`, `d.part(anchor)`; `PART` in `src/clips.js` | The smallest closed shape under an anchor (a display, a burner ring, a dispenser), filled lime when highlighted; at most 20% of the drawing. Building, unit plan and phone carry their own |
 | Drawing Camera | `d.camera(s, focus, p)`, `d.look(cx, cy, s)` | Zoom and pan by viewBox; line weights stay fixed on screen at any zoom |
 | Tracer | `Tracer(drawing, route)` | The lime dot walking a route of anchors, with its trail |
 | Phone | `Phone(card, screen)` | A real mobile screen in its device shell, centred |
@@ -62,6 +62,7 @@ Use these names exactly in briefs, reviews and changelog entries. Every motion c
 |---|---|---|
 | Illustration | `illustrations/svg/` (built by `illustrations/build.py`, `scenes_more.py`) | Isometric line drawing, dark and light versions; outer contours heavier, appliance corners rounded |
 | Outer Contour | `Drawing.outline()`, `sil` in `illustrations/iso.py` | The silhouette of each solid, about 1.6 times the inner line weight |
+| Face Tone | `tone-*` tokens; roles `data-f` / `data-s` set by `iso.py` | Flat fill by the way a face turns: top, left, right, curved side, dark accent |
 | Rounded Box | `Drawing(round=r)` in `iso.py`; `ROUND` in `build.py` | A box with rounded vertical corners |
 | Phone | `illustrations/phone_site.py` from `sources/phone-site.svg` | The website's isometric phone with the capture record button |
 | Anchor | `illustrations/anchors.json` | Named points on a drawing: lime parts, zoom targets, the capture route |

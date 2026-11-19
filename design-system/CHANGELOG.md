@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-19, toned drawings, smaller lime parts
+
+- Drawings are now toned like the phone on verstack.ai: flat fills by the way each face turns (top lightest, left light grey, right darker, curved sides between) and a dark accent for glass and displays. New `tone-*` tokens with light and dark values; every element carries its role so clips recolour it for the mode.
+- Lime parts are now small: a display, a burner ring, a dispenser, a filter slot, a trackpad. `verify.py` fails any lime part over 20% of its drawing; the largest in the library is 9.7%.
+- Still samples and all 100 clips re-rendered.
+
 ## 2026-11-19, light and dark modes, website line weights
 
 - Every clip now has a light and a dark mode (`VS.mount(..., { theme })`, `player.html?theme=dark`, a Mode switch in the catalog). Dark mode: `card-dark` (#141416) cards with a faint edge on the dark ground, mist lines; the lime part's outline and the lines drawn on it turn dark as it lights. 100 MP4s: `motion/out/light/` and `motion/out/dark/`.

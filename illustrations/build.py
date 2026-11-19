@@ -146,13 +146,14 @@ def dishwasher(d, hi=False):
     st = "hi_stroke" if hi else "stroke"
     d.rect_on("y", D, 0.18, 0.75, W - 0.18, H - 0.18, stroke=st)
     d.line3((0.18, D, 7.45), (W - 0.18, D, 7.45), stroke=st)
-    d.rect_on("y", D, 0.6, 7.7, 2.5, 8.08, stroke=st)
+    d.rect_on("y", D, 0.6, 7.7, 2.5, 8.08, fill="accent", stroke=st)
     for u in (3.4, 4.0, 4.6, 5.2):
         d.circle_on("y", (u, D, 7.89), 0.14, stroke=st)
     d.rect_on("y", D, 1.6, 6.75, 4.4, 7.05, stroke=st)
     d.rect_on("y", D, 0.18, 0.0, W - 0.18, 0.6, stroke="muted")
     d.line3((W, 0.25, H - 0.35), (W, D - 0.25, H - 0.35), stroke=st)
     d.anchor("controls", (4.3, D, 7.9))
+    d.anchor("display", (1.55, D, 7.89))
     d.anchor("door", (3.0, D, 4.0))
 
 
@@ -205,6 +206,7 @@ def condenser(d):
         ca, sa = math.cos(math.radians(a)), math.sin(math.radians(a))
         d.line3((4 + 0.55 * ca, 4 + 0.55 * sa, zt), (4 + 3.1 * ca, 4 + 3.1 * sa, zt))
     d.anchor("fan", (4, 4, zt))
+    d.anchor("fan-ring", (5.2, 4, zt))  # between the hub and the second ring
     d.anchor("panel", (W, 6.35, 3.5))
 
 
