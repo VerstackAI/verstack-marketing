@@ -10,14 +10,14 @@ Open `design-system/index.html` in a browser. It works straight from disk and fr
 https://verstackai.github.io/verstack-marketing/design-system/
 ```
 
-The catalog shows the tokens, every component working, all 50 motion clips playing live (at 16:9, 1:1 or 4:5), every drawing, every captured app screen and the still layouts. Click a clip to open it full size in `player.html`.
+The catalog shows the tokens, every component working, all 50 motion clips playing live (light or dark mode, at 16:9, 1:1 or 4:5), every drawing, every captured app screen and the still layouts. Click a clip to open it full size in `player.html`.
 
 ## Files
 
 | File | What |
 | --- | --- |
 | `index.html`, `catalog.css`, `catalog.js` | The catalog page |
-| `player.html` | Plays one clip full size: `player.html?clip=draw-dishwasher&w=1920&h=1080` |
+| `player.html` | Plays one clip full size: `player.html?clip=draw-dishwasher&w=1920&h=1080&theme=dark` |
 | `src/tokens.css`, `src/tokens.js` | Tokens as CSS variables and as `VS.tokens`. Generated from `brand/tokens.json` |
 | `src/assets.js` | Drawings, anchors, product UI boxes and image sizes as `VS.assets`. Generated |
 | `src/engine.js` | Timing maths and the moves (`VS.engine`, `VS.moves`) |
@@ -32,8 +32,8 @@ The catalog shows the tokens, every component working, all 50 motion clips playi
 
 1. Add a `VS.clip({ id, group, name, build })` to `src/clips.js`, using the components. Keep it imagery only and centred.
 2. Open `player.html?clip=<id>` and watch it.
-3. Run `python3 design-system/scripts/verify.py <id>`.
-4. Render it: `python3 motion/render.py <id>` (MP4 in `motion/out/`).
+3. Run `python3 design-system/scripts/verify.py <id>` (checks both modes).
+4. Render it: `python3 motion/render.py <id>` (light and dark MP4s in `motion/out/light/` and `motion/out/dark/`).
 5. Add a line to `CHANGELOG.md`.
 
 After changing `brand/tokens.json`, a drawing, or a product UI capture, run `python3 design-system/build.py` first.

@@ -9,11 +9,11 @@ VS.clips = VS.clips || [];
 /** Register a clip: { id, group, name, build(frame) -> render(t) or { render, duration } }. */
 VS.clip = (def) => { VS.clips.push(def); };
 
-/** Build clip `id` into root at W x H. Resolves when every image has decoded. */
-VS.mount = async (root, id, { W = 1920, H = 1080 } = {}) => {
+/** Build clip `id` into root at W x H in the light or dark theme. Resolves when every image has decoded. */
+VS.mount = async (root, id, { W = 1920, H = 1080, theme = "light" } = {}) => {
   const def = VS.clips.find((c) => c.id === id);
   if (!def) throw new Error(`no clip ${id}`);
-  const frame = VS.components.Frame(root, W, H);
+  const frame = VS.components.Frame(root, W, H, theme);
   const imgs = () => [...frame.el.querySelectorAll("img")];
   const built = def.build(frame);
   // WHY: a clip may work out its own length from its drawings (more outlines take longer to draw).

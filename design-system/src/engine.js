@@ -47,7 +47,15 @@ window.VS = window.VS || {};
   /** Fill the drawing's lime part (if any) from ground to lime at t0, back at t1. */
   function lime(d, t, t0 = Infinity, t1 = Infinity) {
     const h = ease(prog(t, t0, 0.48)) * (1 - ease(prog(t, t1, 0.4)));
-    d.limeItems.forEach((it) => { it.el.style.fill = mix(d.ground, it.limeFill, h); });
+    d.limeItems.forEach((it) => {
+      it.el.style.fill = mix(it.groundFill, it.limeFill, h);
+      // Dark mode: the lit part's outline turns dark so the lime keeps its edge.
+      if (d.theme.limeStroke) {
+        if (it.stroke && it.stroke[0] === "#") it.el.style.stroke = mix(it.stroke, d.theme.limeStroke, h);
+        it.over.forEach((o) => { o.el.style.stroke = mix(o.stroke, d.theme.limeStroke, h); });
+      }
+      it.el.dataset.lime = h.toFixed(3);
+    });
   }
 
   /** Show a drawing complete, no draw-on (for clips that start mid-story). */

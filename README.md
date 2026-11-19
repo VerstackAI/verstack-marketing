@@ -22,8 +22,8 @@ For example, the white lockup for an email header:
 | `brand/` | Logos (SVG and PNG), fonts (Inter and IBM Plex Sans, with licences) and `tokens.json` |
 | `design-system/` | The code-based design system: tokens, components and the 50-clip motion library in `src/`, a live catalog (`index.html`, also at `https://verstackai.github.io/verstack-marketing/design-system/`), a clip player, a rule checker, and the rules and names (`RULES.md`, `COMPONENT_INDEX.md`, `DESIGN_SYSTEM.md`, `CHANGELOG.md`, `AGENT_CONTEXT.md`) in the same shape as the app's design systems |
 | `product-ui/` | Real app screens and parts captured from the running apps (`capture.py`), with `anchors.json` |
-| `illustrations/` | The isometric line drawings (`svg/`, 21 subjects, dark and light), the small engine that draws them (`iso.py`, `build.py`, `scenes_more.py`) and `anchors.json`, the points leader lines attach to |
-| `motion/` | The motion library rendered to video (`out/<id>.mp4`, 1920 x 1080, 50 clips, imagery only) and `render.py`, which records any clip from the design system at any size |
+| `illustrations/` | The isometric line drawings (`svg/`, 21 subjects, dark and light), the small engine that draws them (`iso.py`, `build.py`, `scenes_more.py`), the website's phone (`sources/phone-site.svg`, `phone_site.py`) and `anchors.json`, the named points on each drawing |
+| `motion/` | The motion library rendered to video, 50 clips in a light and a dark mode (`out/light/<id>.mp4`, `out/dark/<id>.mp4`, 1920 x 1080, imagery only), and `render.py`, which records any clip from the design system at any size |
 | `templates/` | Still layouts: spec sheet and data plate (LinkedIn, 1080 x 1350), annotated drawing (1920 x 1080), email hero (1104 x 552), link preview (1200 x 630), product phone (1080 x 1350), product desktop (1920 x 1080). `gen.py` places drawings, app UI and leader lines |
 | `email/` | Source of the Resend template `verstack-product-update`, plus sample values |
 | `releases/` | One folder per release, holding its rendered images |
@@ -57,7 +57,7 @@ python3 product-ui/capture.py           # app UI (needs the web app in mock mode
 python3 design-system/build.py          # tokens and the drawing bundle for the code design system
 python3 design-system/scripts/verify.py # check every clip against the motion rules
 python3 templates/gen.py                # still layouts
-python3 motion/render.py --jobs 2       # all 50 clips to motion/out/*.mp4
+python3 motion/render.py --jobs 2       # all 50 clips, light and dark, to motion/out/<mode>/*.mp4
 ```
 
 Read `design-system/RULES.md` before making anything new.

@@ -74,12 +74,16 @@ VS.tokens = {
  "dur-scan-short": "1600ms",
  "ease-standard": "cubic-bezier(0.2, 0, 0, 1)",
  "ease-scan": "ease-in-out",
- "stroke-line": "1.25px",
- "stroke-hair": "1px",
+ "stroke-contour": "2.2px",
+ "stroke-line": "1.4px",
+ "stroke-hair": "1.1px",
+ "corner-round": "0.22",
  "dot-size": "9px",
  "seam": "16px",
  "card-radius": "40px",
  "fill": "0.68",
  "ring": "4px",
- "sweep": "0.14"
+ "sweep": "0.14",
+ "card-dark": "#141416",
+ "card-dark-edge": "rgb(248 250 252 / 0.08)"
 };

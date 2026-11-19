@@ -56,10 +56,14 @@ def rounded_rect(x0, y0, x1, y1, r, n=8):
 class Drawing:
     """Collects SVG elements in draw order and tracks the bounding box."""
 
-    def __init__(self, theme="dark", scale=40, sw=1.25):
+    def __init__(self, theme="dark", scale=40, sw=1.25, round=0.0, sil=1.6):
         self.t = THEMES[theme]
         self.s = scale
         self.sw = sw
+        # Website phone weights: the outer contour is heavier than the lines inside it
+        # (0.5 against 0.3 on verstack.ai). sil is that ratio; round softens box corners.
+        self.round = round
+        self.sil = sil
         self.els = []
         self.xs, self.ys = [], []
         self.anchors = {}
@@ -94,6 +98,7 @@ class Drawing:
         d = " ".join(f"{x:.2f},{y:.2f}" for x, y in p2)
         tag = "polygon" if close else "polyline"
         self.els.append(f'<{tag} points="{d}" {self._attrs(fill if close else None, stroke, sw)}/>')
+        # (fill None on a closed shape draws an outline only)
 
     def line3(self, a, b, stroke="stroke", sw=None, dash=None):
         (x1, y1), (x2, y2) = self._pt(a), self._pt(b)
@@ -114,16 +119,28 @@ class Drawing:
         self.poly3(pts, fill, stroke)
 
     # --- solids ----------------------------------------------------------
+    def outline(self, pts3, stroke="stroke"):
+        """The heavy outer contour of a solid: the hull of its projected points, no fill."""
+        sil = hull([proj(*p, self.s) for p in pts3])
+        self.poly2(sil, None, stroke, self.sw * self.sil)
+
     def box(self, x, y, z, w, d, h, fill="bg", hi=False, stroke=None):
-        """Axis-aligned box; draws the two front faces and the top."""
+        """Axis-aligned box; draws the two front faces and the top, then its outer contour.
+        With Drawing(round=r) a box at least 1 unit across gets rounded vertical edges."""
         x1, y1, z1 = x + w, y + d, z + h
         st = stroke or ("hi_stroke" if hi else "stroke")
+        r = min(self.round, 0.18 * min(w, d))
+        if r > 0.05 and min(w, d) >= 1.0 and not hi:
+            self.slab(rounded_rect(x, y, x1, y1, r), z, z1, fill, stroke=st)
+            return
         f_l, f_r, f_t = ("hi_l", "hi_r", "hi_top") if hi else (fill, fill, fill)
         # face looking down-left (y = y1)
         self.poly3([(x, y1, z), (x1, y1, z), (x1, y1, z1), (x, y1, z1)], f_l, st)
         # face looking down-right (x = x1)
         self.poly3([(x1, y, z), (x1, y1, z), (x1, y1, z1), (x1, y, z1)], f_r, st)
         self.poly3([(x, y, z1), (x1, y, z1), (x1, y1, z1), (x, y1, z1)], f_t, st)
+        if self.sil > 1:
+            self.outline([(a, b, c) for a in (x, x1) for b in (y, y1) for c in (z, z1)], st)
 
     def slab(self, foot, z0, z1, fill="bg", hi=False, stroke=None):
         """Convex prism from a footprint: silhouette, then the top outline."""
@@ -131,14 +148,14 @@ class Drawing:
         bottom = [(x, y, z0) for x, y in foot]
         top = [(x, y, z1) for x, y in foot]
         sil = hull([proj(*p, self.s) for p in bottom + top])
-        self.poly2(sil, "hi_l" if hi else fill, st)
+        self.poly2(sil, "hi_l" if hi else fill, st, self.sw * self.sil)
         self.poly3(top, "hi_top" if hi else fill, st)
 
     def cylinder_z(self, cx, cy, r, z0, z1, fill="bg", stroke="stroke", n=72, top=True):
         """Upright cylinder."""
         circ = lambda z: [(cx + r * math.cos(2 * math.pi * i / n), cy + r * math.sin(2 * math.pi * i / n), z) for i in range(n)]
         sil = hull([proj(*p, self.s) for p in circ(z0) + circ(z1)])
-        self.poly2(sil, fill, stroke)
+        self.poly2(sil, fill, stroke, self.sw * self.sil)
         if top:
             self.poly3(circ(z1), fill, stroke)
 
@@ -146,7 +163,7 @@ class Drawing:
         """Cylinder lying along x (e.g. a battery cell)."""
         circ = lambda x: [(x, cy + r * math.cos(2 * math.pi * i / n), cz + r * math.sin(2 * math.pi * i / n)) for i in range(n)]
         sil = hull([proj(*p, self.s) for p in circ(x0) + circ(x1)])
-        self.poly2(sil, fill, stroke)
+        self.poly2(sil, fill, stroke, self.sw * self.sil)
         self.poly3(circ(x1), fill, stroke)
 
     def circle_on(self, plane, c, r, fill=None, stroke="stroke", sw=None, n=64):

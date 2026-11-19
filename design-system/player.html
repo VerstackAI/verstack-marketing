@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Verstack motion player</title>
-<!-- Plays one library clip full size: player.html?clip=draw-dishwasher&w=1920&h=1080
+<!-- Plays one library clip full size: player.html?clip=draw-dishwasher&w=1920&h=1080&theme=dark
      motion/render.py opens this page with &render and steps renderAt(t) frame by frame. -->
 <link rel="stylesheet" href="src/tokens.css">
 <style>html, body { margin: 0; background: var(--ground-900); } #stage { width: max-content; }</style>
@@ -21,7 +21,9 @@
   const q = new URLSearchParams(location.search);
   const id = q.get("clip") || VS.clips[0].id;
   const W = +(q.get("w") || 1920), H = +(q.get("h") || 1080);
-  const m = await VS.mount(document.getElementById("stage"), id, { W, H });
+  const theme = q.get("theme") === "dark" ? "dark" : "light";
+  document.body.style.background = VS.themes[theme].ground;
+  const m = await VS.mount(document.getElementById("stage"), id, { W, H, theme });
   window.renderAt = m.render;
   window.DURATION = m.duration;
   window.CLIPS = VS.clips.map((c) => c.id);

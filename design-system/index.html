@@ -33,7 +33,7 @@
 <main>
   <section class="intro">
     <h1>Marketing design system</h1>
-    <p>Release videos, explainers, LinkedIn and email. Line drawings and real app screens on light cards over the dark ground, with one lime element at a time. Every clip below is running from the code in <code>design-system/src</code>.</p>
+    <p>Release videos, explainers, LinkedIn and email. Line drawings and real app screens on cards over the dark ground, in a light and a dark mode, with one lime element at a time. Every clip below is running from the code in <code>design-system/src</code>.</p>
   </section>
 
   <section id="foundations">
@@ -56,9 +56,15 @@
 
   <section id="motion">
     <h2>Motion library</h2>
-    <p class="lead">50 clips, imagery only. Click a clip to watch it large. MP4s are in <code>motion/out/</code>; render any size with <code>motion/render.py --size</code>.</p>
+    <p class="lead">50 clips, imagery only, each in a light and a dark mode. Click a clip to watch it large. MP4s are in <code>motion/out/light/</code> and <code>motion/out/dark/</code>; render any size with <code>motion/render.py --size</code>.</p>
     <div class="controls">
       <div id="groups" class="chips"></div>
+      <label class="size">Mode
+        <select id="theme">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </label>
       <label class="size">Frame
         <select id="size">
           <option value="1920x1080">1920 x 1080</option>
@@ -95,7 +101,8 @@
         <li>Clips are imagery only: no headlines, labels, callouts, numbers or keys. Text goes on in the edit or in the post.</li>
         <li>Every drawing, phone and screen is centred both ways in its card.</li>
         <li>One lime element on screen at a time: a lime part, the trace dot, or one ring.</li>
-        <li>Light cards on the dark ground, 16px seam, 40px corners at 1080p.</li>
+        <li>Two modes. Light: light cards on the dark ground. Dark: dark scene cards (#141416) on the same ground, drawn in light lines.</li>
+        <li>Line weight follows the phone on verstack.ai: proportional to the drawing's size, outer contour heavier than the lines inside it. Appliances have softly rounded corners.</li>
         <li>App UI is real captures only. Never redraw, recolour or edit a screen.</li>
         <li>The scan gradient is rare: one faint sweep, never a cut, never on every card.</li>
         <li>New clips go in <code>src/clips.js</code> and must pass <code>python3 design-system/scripts/verify.py</code>.</li>

@@ -13,13 +13,14 @@ Use these names exactly in briefs, reviews and changelog entries. Every motion c
 
 | Canonical name | Code | Meaning |
 |---|---|---|
-| Frame | `Frame(root, W, H)` | The dark ground. Its scale unit `u` is 1 at a 1080 px short side, so one clip renders at any size |
+| Mode | `VS.themes.light`, `VS.themes.dark`; `VS.mount(root, id, { theme })` | Light: mist cards, ink lines. Dark: `card-dark` cards with a faint edge, mist lines, the lime part's outline and the lines on it turning dark |
+| Frame | `Frame(root, W, H, theme)` | The dark ground. Its scale unit `u` is 1 at a 1080 px short side, so one clip renders at any size |
 | Layout | `VS.layout.single`, `.row`, `.grid` | Card boxes with the 16 px seam around and between them |
 | Light Card | `Card(frame, box)` | Mist surface, 40 px radius at 1080p, clipping what it holds |
 | Layer | `Layer(card)` | A full-card layer, so one card can swap one drawing for the next |
-| Drawing | `Drawing(card, name, opts)` | A line drawing centred in its card. Its SVG viewBox is the camera |
-| Lime Part | `Drawing(..., { lime: anchor })`, `d.part(anchor)` | The face under an anchor, filled lime when highlighted. Building, unit plan and phone carry their own |
-| Drawing Camera | `d.camera(s, focus, p)`, `d.look(cx, cy, s)` | Zoom and pan by viewBox, so hairlines stay 1.25 px at any zoom |
+| Drawing | `Drawing(card, name, opts)` | A line drawing centred in its card, recoloured for the mode. Its SVG viewBox is the camera. Line weight from its size on screen, contour heaviest |
+| Lime Part | `Drawing(..., { lime: anchor })`, `d.part(anchor)` | The smallest closed shape under an anchor (a door panel, a dial, a drawer), filled lime when highlighted. Building, unit plan and phone carry their own |
+| Drawing Camera | `d.camera(s, focus, p)`, `d.look(cx, cy, s)` | Zoom and pan by viewBox; line weights stay fixed on screen at any zoom |
 | Tracer | `Tracer(drawing, route)` | The lime dot walking a route of anchors, with its trail |
 | Phone | `Phone(card, screen)` | A real mobile screen in its device shell, centred |
 | Push Screen | `PushScreen(phone, screen)` | The next screen sliding in; shell and status bar stay still |
@@ -43,7 +44,7 @@ Use these names exactly in briefs, reviews and changelog entries. Every motion c
 | Swap | `swapClip` | One card, one drawing after another |
 | Tiles | `tilesClip` | A bento of cards, a drawing centred in each; the lime can walk tile to tile |
 
-## Motion library (`src/clips.js`, 50 clips → `motion/out/<id>.mp4`)
+## Motion library (`src/clips.js`, 50 clips → `motion/out/light/<id>.mp4` and `motion/out/dark/<id>.mp4`)
 
 | Family | Clips |
 |---|---|
@@ -59,7 +60,10 @@ Use these names exactly in briefs, reviews and changelog entries. Every motion c
 
 | Canonical name | Owner | Meaning |
 |---|---|---|
-| Illustration | `illustrations/svg/` (built by `illustrations/build.py`, `scenes_more.py`) | Isometric hairline drawing, dark and light versions |
+| Illustration | `illustrations/svg/` (built by `illustrations/build.py`, `scenes_more.py`) | Isometric line drawing, dark and light versions; outer contours heavier, appliance corners rounded |
+| Outer Contour | `Drawing.outline()`, `sil` in `illustrations/iso.py` | The silhouette of each solid, about 1.6 times the inner line weight |
+| Rounded Box | `Drawing(round=r)` in `iso.py`; `ROUND` in `build.py` | A box with rounded vertical corners |
+| Phone | `illustrations/phone_site.py` from `sources/phone-site.svg` | The website's isometric phone with the capture record button |
 | Anchor | `illustrations/anchors.json` | Named points on a drawing: lime parts, zoom targets, the capture route |
 
 ## Still layouts (`templates/`)

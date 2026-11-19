@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-19, light and dark modes, website line weights
+
+- Every clip now has a light and a dark mode (`VS.mount(..., { theme })`, `player.html?theme=dark`, a Mode switch in the catalog). Dark mode: `card-dark` (#141416) cards with a faint edge on the dark ground, mist lines; the lime part's outline and the lines drawn on it turn dark as it lights. 100 MP4s: `motion/out/light/` and `motion/out/dark/`.
+- Line weights now follow the isometric phone on verstack.ai: proportional to the drawing's size, with each solid's outer contour about 1.6 times the lines inside it. The uniform 1.25 px hairline is retired.
+- Appliance boxes have softly rounded vertical corners (no crease line). Buildings, plans, ladder and paint stay square.
+- The phone drawing is now the website's own isometric phone (`illustrations/sources/phone-site.svg`), with the capture record button as its lime part.
+- Lime parts are now the smallest shape under the anchor (the door panel, the oven window, the washer glass, the smoke detector sensor), not the whole face.
+- `verify.py` checks both modes: 100 of 100 pass.
+
 ## 2026-11-19, motion library as code
 
 - The design system is now code: tokens (`src/tokens.css`, `src/tokens.js`, generated from `brand/tokens.json`), components (`src/components.js`), moves (`src/engine.js`) and the clip library (`src/clips.js`), with a live catalog (`index.html`) and a player (`player.html`).

@@ -53,8 +53,8 @@ h3 { font-size: 18px; font-weight: 600; margin: 0 0 16px; color: var(--ink-700);
 .comp p { font-size: 15px; line-height: 1.45; color: var(--ink-500); margin: 0 0 14px; }
 .comp .clip { background: var(--ground-900); }
 
-.controls { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
-.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.controls { display: flex; justify-content: flex-start; align-items: center; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-right: auto; }
 .chips button { font: inherit; font-size: 15px; border: 1px solid rgb(248 250 252 / 0.2); background: transparent; color: var(--mist); padding: 8px 16px; border-radius: 999px; cursor: pointer; }
 .chips button.on { background: var(--mist); color: var(--ink-900); }
 .size { font-size: 15px; color: var(--fg-muted-dark); display: flex; gap: 10px; align-items: center; }

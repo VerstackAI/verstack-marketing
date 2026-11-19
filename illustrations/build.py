@@ -9,6 +9,7 @@ import pathlib
 import sys
 from iso import Drawing, rounded_rect
 from scenes_more import MORE
+import phone_site
 
 OUT = pathlib.Path(__file__).parent / "svg"
 OUT.mkdir(exist_ok=True)
@@ -207,33 +208,20 @@ def condenser(d):
     d.anchor("panel", (W, 6.35, 3.5))
 
 
-def phone(d):
-    foot = rounded_rect(0, 0, 4.4, 9.0, 0.62)
-    d.slab(foot, 0, 0.42)
-    d.poly3([(x, y, 0.42) for x, y in rounded_rect(0.24, 0.24, 4.16, 8.76, 0.44)])
-    d.poly3([(x, y, 0.42) for x, y in rounded_rect(1.6, 0.55, 2.8, 0.9, 0.17)])
-    # capture screen: room label, viewfinder brackets, record button
-    d.rect_on("z", 0.42, 0.7, 1.35, 2.6, 1.6)
-    d.rect_on("z", 0.42, 0.7, 1.75, 1.9, 1.95, stroke="muted")
-    for (x, y, dx, dy) in ((0.7, 2.4, 1, 1), (3.7, 2.4, -1, 1), (0.7, 6.5, 1, -1), (3.7, 6.5, -1, -1)):
-        d.poly3([(x + 0.6 * dx, y, 0.42), (x, y, 0.42), (x, y + 0.6 * dy, 0.42)], close=False)
-    d.circle_on("z", (2.2, 7.65, 0.42), 0.55)
-    d.circle_on("z", (2.2, 7.65, 0.42), 0.38, fill="hi_top", stroke="hi_stroke")
-    d.rect_on("x", 4.4, 2.0, 0.12, 3.1, 0.3)
-    d.anchor("record", (2.2, 7.65, 0.42))
-    d.anchor("viewfinder", (2.2, 4.4, 0.42))
-
-
 SCENES = {
     "building": (building, 34),
     "unit-plan": (unit_plan, 46),
     "dishwasher": (dishwasher, 40),
     "water-heater": (water_heater, 40),
     "condenser": (condenser, 36),
-    "phone": (phone, 44),
 }
 SCENES.update(MORE)
 SCENES.update(PRIVATE_SCENES)
+
+# Corner rounding (drawing units) and outer-contour weight per scene; the defaults suit objects.
+# Architecture stays square-cornered; plans keep a lighter contour so walls do not shout.
+ROUND = {"building": 0, "building-floors": 0, "unit-plan": 0, "ladder": 0, "paint": 0}
+SIL = {"building": 1.5, "building-floors": 1.5, "unit-plan": 1.3}
 
 anchors, private_anchors = {}, {}
 for name, (fn, scale) in SCENES.items():
@@ -243,7 +231,7 @@ for name, (fn, scale) in SCENES.items():
     out = (PRIVATE / "svg") if private else OUT
     out.mkdir(parents=True, exist_ok=True)
     for theme in ("dark", "light"):
-        d = Drawing(theme, scale=scale, sw=1.25)
+        d = Drawing(theme, scale=scale, sw=1.25, round=ROUND.get(name, 0.22), sil=SIL.get(name, 1.6))
         fn(d)
         svg, box = d.svg(pad=28)
         (out / f"{name}-{theme}.svg").write_text(svg)
@@ -252,6 +240,10 @@ for name, (fn, scale) in SCENES.items():
             entry = {"viewBox": [round(x0, 1), round(y0, 1), round(w, 1), round(h, 1)],
                      "points": {k: [round(v[0], 1), round(v[1], 1)] for k, v in d.anchors.items()}}
             (private_anchors if private else anchors)[name] = entry
+# The phone is the website's own isometric phone (see phone_site.py), not drawn here.
+light, dark, anchors["phone"] = phone_site.build()
+(OUT / "phone-light.svg").write_text(light)
+(OUT / "phone-dark.svg").write_text(dark)
 (OUT.parent / "anchors.json").write_text(json.dumps(anchors, indent=1))
 if PRIVATE:
     (PRIVATE / "anchors.json").write_text(json.dumps(private_anchors, indent=1))

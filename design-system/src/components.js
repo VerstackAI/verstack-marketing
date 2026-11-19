@@ -11,6 +11,26 @@ VS.base = VS.base || "../";
 (() => {
   const MIST = "#f8fafc", LIME = "#a5fc22", INK = "#30303a";
   const LIME_RE = /#a5fc22|#7ff553|#8ff741/i;
+
+  /** Light and dark modes. Light: light cards on the dark ground. Dark: dark scene cards
+      (the website's scene-dark) on the same ground, drawn in light lines. `map` recolours the
+      drawings' source colours (the light SVGs, and the website phone's silver tones). */
+  const THEMES = {
+    light: {
+      name: "light", ground: "#171a19", card: MIST, face: MIST, ink: INK, edge: INK, dot: INK, limeStroke: null,
+      map: {},
+    },
+    dark: {
+      name: "dark", ground: "#171a19", card: "#141416", face: "#141416", ink: MIST, edge: "rgb(248 250 252 / 0.24)", dot: "#141416", limeStroke: "#141416",
+      cardEdge: "rgb(248 250 252 / 0.08)",
+      map: {
+        "#f8fafc": "#141416", "#30303a": MIST, "#9a9aa3": "#8b8f8d",
+        "#b7b5af": "#3a3e3c", "#cecdcb": "#2a2e2c", "#3f3e3e": "#0c0d0d", "#ffffff": "#1e1e22",
+        "#2c292a": MIST, "#282828": MIST, "#525151": "#c2c4c5", "#706f6e": "#8b8f8d",
+      },
+    },
+  };
+  const recolor = (theme, c) => (c && theme.map[c.toLowerCase()]) || c;
   const SCREEN = { size: [421, 880], inset: [14, 14, 393, 852], radius: 46, shell: 60, statusBar: 50 };
 
   const el = (tag, cls, style = {}, parent) => {
@@ -23,9 +43,11 @@ VS.base = VS.base || "../";
   const px = (v) => `${Math.round(v * 100) / 100}px`;
 
   /** The dark ground. u is the scale unit: 1 at a 1080px short side. */
-  function Frame(root, W, H) {
-    const node = el("div", "vs-frame", { position: "relative", width: px(W), height: px(H), overflow: "hidden", background: "var(--ground-900)" }, root);
-    return { el: node, W, H, u: Math.min(W, H) / 1080 };
+  function Frame(root, W, H, themeName = "light") {
+    const theme = THEMES[themeName] || THEMES.light;
+    const node = el("div", "vs-frame", { position: "relative", width: px(W), height: px(H), overflow: "hidden", background: theme.ground }, root);
+    node.dataset.theme = theme.name;
+    return { el: node, W, H, u: Math.min(W, H) / 1080, theme };
   }
 
   /** Card boxes on a frame, with the seam (16px at 1080p) around and between them. */
@@ -48,9 +70,10 @@ VS.base = VS.base || "../";
   function Card(frame, box, { radius = 40 } = {}) {
     const node = el("div", "vs-card", {
       position: "absolute", left: px(box.x), top: px(box.y), width: px(box.w), height: px(box.h),
-      borderRadius: px(radius * frame.u), background: "var(--mist)", overflow: "hidden",
+      borderRadius: px(radius * frame.u), background: frame.theme.card, overflow: "hidden",
+      boxShadow: frame.theme.cardEdge ? `inset 0 0 0 ${px(1 * frame.u)} ${frame.theme.cardEdge}` : "none",
     }, frame.el);
-    return { el: node, box, w: box.w, h: box.h, u: frame.u, frame };
+    return { el: node, box, w: box.w, h: box.h, u: frame.u, frame, theme: frame.theme };
   }
 
   /** A layer inside a card that fills it: lets a clip fade or swap one piece of imagery. */
@@ -80,7 +103,7 @@ VS.base = VS.base || "../";
     // Fit on the room the move needs (lift), centre on the drawing at rest.
     const k = Math.min((fill * card.h) / (bb.height + lift), (fillW * card.w) / bb.width);
     const base = { cx: bb.x + bb.width / 2, cy: bb.y + bb.height / 2 };
-    const d = { svg, card, name, k, kk: k, vx: 0, vy: 0, base, rest: bb, ground: MIST, items: [], limeItems: [] };
+    const d = { svg, card, name, k, kk: k, vx: 0, vy: 0, base, rest: bb, items: [], limeItems: [] };
 
     /** Point the camera: centre (cx, cy) in drawing units, scale s over the fitted view. */
     d.look = (cx, cy, s = 1) => {
@@ -102,31 +125,59 @@ VS.base = VS.base || "../";
     /** Anchor point in card pixels (under the current camera). */
     d.point = (n) => { const [x, y] = d.anchor(n); return [(x - d.vx) * d.kk, (y - d.vy) * d.kk]; };
 
-    const shapes = [...svg.querySelectorAll("polygon,polyline,line")];
+    const theme = card.theme || THEMES.light;
+    d.theme = theme;
+    d.ground = theme.face;
+    const SHAPES = "polygon,polyline,line,path,ellipse,circle";
+    const shapes = [...svg.querySelectorAll(SHAPES)];
+    // Line weight follows the website phone: proportional to the drawing's size on screen,
+    // with the outer contour heavier than the lines inside it (each shape's stroke-width
+    // relative to the drawing's heaviest sets its share).
+    const size = Math.max(bb.width, bb.height) * k, u = card.u;
+    const L = Math.min(2.8 * u, Math.max(1.7 * u, 0.003 * size));
+    const swMax = Math.max(...shapes.map((n) => parseFloat(n.getAttribute("stroke-width") || 1)));
     d.items = shapes.map((node) => {
+      // Theme: recolour the source colours (fills, strokes, and a lime part's pre-light colour).
+      ["fill", "stroke"].forEach((attr) => { const c = node.getAttribute(attr); if (c) node.setAttribute(attr, recolor(theme, c)); });
+      if (node.dataset.ground) node.dataset.ground = recolor(theme, node.dataset.ground);
+      node.setAttribute("vector-effect", "non-scaling-stroke");
+      node.style.strokeWidth = px(L * parseFloat(node.getAttribute("stroke-width") || 1) / swMax);
       const len = node.getTotalLength() * d.kk + 2;
       const fillAttr = node.getAttribute("fill") || "none";
       node.style.strokeDasharray = `${len} ${len}`;
       node.style.strokeDashoffset = len;
       if (fillAttr !== "none") node.style.fillOpacity = 0;
-      return { el: node, len, fill: fillAttr };
+      return { el: node, len, fill: fillAttr, stroke: node.getAttribute("stroke") };
     });
-    // WHY: the built-in lime part starts as ground so it reads as a normal face until the highlight.
-    d.items.forEach((it) => {
-      if (LIME_RE.test(it.fill)) { it.el.style.fill = MIST; it.limeFill = it.fill; d.limeItems.push(it); }
-    });
+    const asLime = (it, fillColour) => {
+      it.limeFill = fillColour;
+      it.groundFill = it.el.dataset.ground || (it.fill !== "none" ? it.fill : theme.face);
+      it.el.style.fill = it.groundFill;
+      // The lines drawn on top of the part (a handle, window frames): in dark mode they turn
+      // dark with it, or they would vanish into the lime.
+      const i = d.items.indexOf(it);
+      it.over = d.items.slice(i + 1).filter((o) => {
+        if (!o.stroke || o.stroke[0] !== "#") return false;
+        const b = o.el.getBBox();
+        return it.el.isPointInFill(new DOMPoint(b.x + b.width / 2, b.y + b.height / 2));
+      });
+      d.limeItems.push(it);
+    };
+    // WHY: the built-in lime part starts as its ground so it reads as a normal face until the highlight.
+    d.items.forEach((it) => { if (LIME_RE.test(it.fill)) { it.fill = theme.face; asLime(it, it.el.getAttribute("fill")); } });
 
-    /** Make the face under an anchor the lime part: the smallest closed face containing it. */
+    /** Make the part under an anchor the lime part: the smallest closed shape containing it
+        (a door panel, a dial, a drawer), filled or outline only. */
     d.part = (n) => {
       const [x, y] = d.anchor(n);
       const pt = new DOMPoint(x, y);
       let best = null, area = Infinity;
       d.items.forEach((it) => {
-        if (it.fill === "none" || it.el.tagName !== "polygon" || !it.el.isPointInFill(pt)) return;
+        if (!/^(polygon|path|ellipse|circle)$/.test(it.el.tagName) || !it.el.isPointInFill(pt)) return;
         const b = it.el.getBBox(), ar = b.width * b.height;
-        if (ar < area) { area = ar; best = it; }
+        if (ar > 0 && ar < area) { area = ar; best = it; }
       });
-      if (best) { best.limeFill = LIME; d.limeItems.push(best); }
+      if (best) asLime(best, LIME);
       return best;
     };
     /** Centre of the lime part in drawing units (null if the drawing has none). */
@@ -137,7 +188,7 @@ VS.base = VS.base || "../";
       const x1 = Math.max(...bs.map((b) => b.x + b.width)), y1 = Math.max(...bs.map((b) => b.y + b.height));
       return [(x0 + x1) / 2, (y0 + y1) / 2];
     };
-    if (limeOff || lime) d.limeItems = [];
+    if (limeOff || lime) { d.limeItems.forEach((it) => { it.el.style.fill = it.groundFill; }); d.limeItems = []; }
     if (lime) d.part(lime);
     return d;
   }
@@ -196,7 +247,7 @@ VS.base = VS.base || "../";
     const k0 = Math.min((fill * card.h) / sh, (fillW * card.w) / sw);
     const w = sw * k0, h = sh * k0, x = (card.w - w) / 2, y = (card.h - h) / 2;
     const win = el("div", "vs-screen", { position: "absolute", left: px(x), top: px(y), width: px(w), height: px(h), overflow: "hidden",
-      borderRadius: px(18 * card.u), boxShadow: `0 0 0 ${px(1.5 * card.u)} ${INK}`, background: "#fff" }, card.el);
+      borderRadius: px(18 * card.u), boxShadow: `0 0 0 ${px(1.5 * card.u)} ${card.theme.edge}`, background: "#fff" }, card.el);
     const img = el("img", "", { position: "absolute", left: "0", top: "0", width: px(sw), transformOrigin: "0 0" }, win);
     img.src = `${VS.base}product-ui/desktop/screens/${screen}.png`;
     img.alt = "";
@@ -221,7 +272,7 @@ VS.base = VS.base || "../";
     const h = (natural[1] / natural[0]) * w;
     const left = x === null ? (card.w - w) / 2 : x, top = y === null ? (card.h - h) / 2 : y;
     const node = el("img", "vs-part", { position: "absolute", left: px(left), top: px(top), width: px(w), borderRadius: px(20 * card.u),
-      boxShadow: `0 0 0 ${px(1.5 * card.u)} ${INK}`, background: "#fff" }, card.el);
+      boxShadow: `0 0 0 ${px(1.5 * card.u)} ${card.theme.edge}`, background: "#fff" }, card.el);
     node.src = `${VS.base}product-ui/${src}`;
     node.alt = "";
     return { el: node, x: left, y: top, w, h };
@@ -246,11 +297,11 @@ VS.base = VS.base || "../";
     const trail = document.createElementNS(NS, "polyline");
     trail.classList.add("vs-trail");
     trail.setAttribute("points", pts.map((p) => p.join(",")).join(" "));
-    Object.assign(trail.style, { fill: "none", stroke: INK, strokeWidth: "2", strokeLinejoin: "round", strokeLinecap: "round", opacity: "0.55" });
+    Object.assign(trail.style, { fill: "none", stroke: d.theme.ink, strokeWidth: "2", strokeLinejoin: "round", strokeLinecap: "round", opacity: "0.55" });
     trail.setAttribute("vector-effect", "non-scaling-stroke");
     const dot = document.createElementNS(NS, "circle");
     dot.classList.add("vs-dot");
-    dot.setAttribute("fill", LIME); dot.setAttribute("stroke", INK); dot.setAttribute("stroke-width", "2");
+    dot.setAttribute("fill", LIME); dot.setAttribute("stroke", d.theme.dot); dot.setAttribute("stroke-width", "2");
     dot.setAttribute("vector-effect", "non-scaling-stroke");
     d.svg.appendChild(trail); d.svg.appendChild(dot);
     const total = trail.getTotalLength();
@@ -289,6 +340,7 @@ VS.base = VS.base || "../";
     };
   }
 
+  VS.themes = THEMES;
   VS.components = { Frame, Card, Layer, Drawing, Phone, PushScreen, Screen, Part, Ring, Tracer, Sweep };
   VS.layout = layout;
 })();

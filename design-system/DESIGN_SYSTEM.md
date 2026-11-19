@@ -11,7 +11,7 @@ Two kinds of picture carry the story:
 
 ## Principles
 
-**Light cards on the dark.** Every frame has at least one light card on the dark ground, like the cards on verstack.ai.
+**Cards on the dark, in two modes.** Every frame is cards on the dark ground, like verstack.ai. Light mode: mist cards, ink lines. Dark mode: dark scene cards, light lines, the way the site shows dark product scenes.
 
 **Clips are pictures.** A motion clip is imagery only, centred in its card: a drawing drawing itself, a building opening, a phone screen changing. The words go on in the video edit or in the post, never inside the clip.
 
@@ -35,6 +35,7 @@ Two kinds of picture carry the story:
 | `ink-700` | `#30303a` | Drawing lines and callouts on a Light Card |
 | `ink-500` | `#6d6d78` | The line under a callout name on a Light Card |
 | `lime-electric` | `#a5fc22` | The one lime element |
+| `card-dark` | `#141416` | Dark mode card (the website's scene-dark) |
 | `scan-1`…`scan-7` | `#f8fafc` → `#7ff553` | The gradient sweep only |
 
 Full values are in `brand/tokens.json`. The app's own semantic tokens (slate structure, status colours) stay inside the app UI images.
@@ -61,7 +62,12 @@ Inter throughout marketing frames. IBM Plex Sans appears only inside app UI, bec
 
 ## Drawings
 
-Isometric, 1.25 px hairlines, faces filled with the surface they sit on, built by `illustrations/build.py` so every line matches. 21 public drawings, dark and light; use the light version on a Light Card. One Lime Part per drawing that has a subject. See `illustrations/` and the claude.ai design system's Drawing section.
+Isometric, faces filled with the surface they sit on, built by `illustrations/build.py` so every line matches. 21 public drawings, dark and light. One Lime Part per drawing that has a subject.
+
+- **Line weight** follows the isometric phone on verstack.ai (0.5 contour, 0.3 inside on a 198-unit drawing): proportional to the drawing's size on screen, with each solid's outer contour about 1.6 times the weight of the lines inside it. In clips the weight is set from the drawing's size: 0.3% of its longer side, 1.7 to 2.8 px at 1080p.
+- **Rounding**: appliance boxes have softly rounded vertical corners (0.22 units on a 6-unit appliance), with no crease line where the corner turns. Buildings, plans, ladders and paint stay square.
+- **The phone** is the website's own isometric phone (`illustrations/sources/phone-site.svg`, from `public/media/phones/iphone-outline.svg` on the site), with its silver, rim and bezel tones, plus the capture record button as its lime part.
+- **Modes**: clips recolour the light source drawings at runtime. Dark mode maps faces to `card-dark`, lines to mist and the phone's tones to darker ones.
 
 ## App UI
 
@@ -83,7 +89,8 @@ The library is 50 clips in seven families: Draw (20), Explode (3), Zoom (4), Tra
 - Moves: Draw, Highlight, Explode, Assemble, Zoom, Trace, Swap, Rise, Push, Ring In. Ease `cubic-bezier(0.2, 0, 0, 1)`; no bounce.
 - Timing: a drawing draws on in 0.8–2.2 s depending on how many outlines it has; the lime part fills in 0.48 s; app UI rises 40 px in 0.7 s; every clip holds its last frame about 1.5 s.
 - Every clip exposes `renderAt(t)`. `player.html` plays one; `motion/render.py` steps it at 30 fps into an MP4; the catalog loops all of them.
-- `scripts/verify.py` checks every clip in a real browser: no text, imagery centred in every card, one lime element at a time.
+- `scripts/verify.py` checks every clip in a real browser, in both modes: no text, imagery centred in every card, one lime element at a time.
+- Every clip renders in two modes: `motion/out/light/<id>.mp4` and `motion/out/dark/<id>.mp4`.
 
 ## Voice
 

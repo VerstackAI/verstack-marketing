@@ -26,11 +26,11 @@
   const live = new Map();
   const io = new IntersectionObserver((entries) => entries.forEach((e) => { const p = live.get(e.target); if (p) p.visible = e.isIntersecting; }), { rootMargin: "200px" });
 
-  function preview(id, W, H) {
+  function preview(id, W, H, theme = "light") {
     const def = VS.clips.find((c) => c.id === id);
     const a = make("a", "clip");
-    a.href = `player.html?clip=${id}&w=${W}&h=${H}`;
-    a.onclick = (e) => { e.preventDefault(); open(id, W, H); };
+    a.href = `player.html?clip=${id}&w=${W}&h=${H}&theme=${theme}`;
+    a.onclick = (e) => { e.preventDefault(); open(id, W, H, theme); };
     const stage = make("div", "stage"), inner = make("div", "inner");
     stage.style.aspectRatio = `${W} / ${H}`;
     stage.appendChild(inner);
@@ -42,7 +42,7 @@
     new ResizeObserver(fit).observe(stage);
     // Mount once the card is in the page, so drawings can measure themselves.
     requestAnimationFrame(async () => {
-      const m = await VS.mount(inner, id, { W, H });
+      const m = await VS.mount(inner, id, { W, H, theme });
       fit();
       state.stop = VS.play(m, { isVisible: () => state.visible });
     });
@@ -52,7 +52,7 @@
 
   // Full-size view of one clip, in the page ------------------------------------
   let closeOpen = null;
-  async function open(id, W, H) {
+  async function open(id, W, H, theme = "light") {
     if (closeOpen) closeOpen();
     const def = VS.clips.find((c) => c.id === id);
     const ov = make("div", "overlay");
@@ -61,13 +61,13 @@
     Object.assign(stage.style, { width: `${W * k}px`, height: `${H * k}px` });
     inner.style.transform = `scale(${k})`;
     stage.appendChild(inner);
-    const bar = make("div", "ov-bar", `<span>${def.name}</span><span class="id">${id} &middot; ${W} x ${H} &middot; motion/out/${id}.mp4</span>`);
+    const bar = make("div", "ov-bar", `<span>${def.name}</span><span class="id">${id} &middot; ${theme} &middot; ${W} x ${H} &middot; motion/out/${theme}/${id}.mp4</span>`);
     const x = make("button", "ov-close", "Close");
     bar.appendChild(x);
     box.append(stage, bar);
     ov.appendChild(box);
     document.body.appendChild(ov);
-    const m = await VS.mount(inner, id, { W, H });
+    const m = await VS.mount(inner, id, { W, H, theme });
     const stop = VS.play(m);
     closeOpen = () => { stop(); ov.remove(); closeOpen = null; };
     x.onclick = closeOpen;
@@ -77,8 +77,10 @@
 
   // Components ------------------------------------------------------------------
   const COMPONENTS = [
-    ["Frame and Card", "The dark ground and the light cards on it, laid out by VS.layout (single, row, grid) with a 16px seam.", "tiles-six"],
-    ["Drawing", "A line drawing centred in its card; its viewBox is the camera. Draws on outline by outline; one part turns lime.", "draw-dishwasher"],
+    ["Frame and Card", "The dark ground and the cards on it, laid out by VS.layout (single, row, grid) with a 16px seam. Light mode: light cards. Dark mode: dark scene cards.", "tiles-six"],
+    ["Dark mode", "Every clip in dark mode: dark cards, light lines, the lime part's outline and the lines on it turned dark.", "zoom-unit", "dark"],
+    ["Drawing", "A line drawing centred in its card; its viewBox is the camera. Line weight follows the size on screen, heavier on the outer contour, like the phone on verstack.ai. Draws on outline by outline; one part turns lime.", "draw-dishwasher"],
+    ["Phone", "The isometric phone from verstack.ai, with the capture record button as its lime part.", "draw-phone"],
     ["Drawing camera", "Moves into the lime part and keeps hairlines at 1.25px at any zoom.", "zoom-kitchen"],
     ["Tracer", "The lime dot walking a route through a unit plan. The camera can follow it.", "trace-follow"],
     ["Phone and Ring", "A real phone screen, centred, with the lime ring on one captured element.", "app-field-home"],
@@ -86,9 +88,9 @@
     ["Screen", "A real desktop screen, centred, that zooms toward one element without showing past its edge.", "app-board-zoom"],
     ["Part", "Captured app cards (work orders, locations) placed on a card.", "app-work-orders"],
   ];
-  COMPONENTS.forEach(([name, text, id]) => {
+  COMPONENTS.forEach(([name, text, id, theme]) => {
     const c = make("div", "comp", `<h3>${name}</h3><p>${text}</p>`);
-    c.appendChild(preview(id, 1920, 1080));
+    c.appendChild(preview(id, 1920, 1080, theme));
     $("#component-list").appendChild(c);
   });
 
@@ -100,7 +102,8 @@
     const lib = $("#library");
     lib.innerHTML = "";
     const [W, H] = $("#size").value.split("x").map(Number);
-    VS.clips.filter((c) => group === "All" || c.group === group).forEach((c) => lib.appendChild(preview(c.id, W, H)));
+    const theme = $("#theme").value;
+    VS.clips.filter((c) => group === "All" || c.group === group).forEach((c) => lib.appendChild(preview(c.id, W, H, theme)));
   };
   groups.forEach((g) => {
     const n = g === "All" ? VS.clips.length : VS.clips.filter((c) => c.group === g).length;
@@ -109,6 +112,7 @@
     $("#groups").appendChild(b);
   });
   $("#size").onchange = renderLibrary;
+  $("#theme").onchange = renderLibrary;
   renderLibrary();
 
   // Reference grids ---------------------------------------------------------------
