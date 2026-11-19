@@ -60,6 +60,28 @@ function enter(el, t, t0, dur = 0.48, rise = 16) {
   el.style.transform = `translateY(${(1 - p) * rise}px)`;
 }
 
+/* The scan gradient from verstack.ai: white to lime. It only ever appears while moving. */
+const SCAN = "#f8fafc 0%, #eefbd7 12%, #d8f7a3 26%, #baf85d 42%, #a5fc22 58%, #8ff741 74%, #7ff553 100%";
+
+/** Sweep: a feathered band of the scan gradient crossing a card left to right
+    (the site's closing tile). el is a .sweep div inside a .sweep-clip overlay. */
+function sweep(el, t, t0, dur = 1.6) {
+  const p = prog(t, t0, dur);
+  const x = -100 + 200 * (p * p * (3 - 2 * p));
+  el.style.transform = `translateX(${x}%)`;
+  el.style.visibility = p > 0 && p < 1 ? "visible" : "hidden";
+}
+
+/** Scan: a tile fades to the scan gradient and back (the site's hero tiles, pv-scan). */
+function scanAt(el, t, t0, dur = 1.3, peak = 1) {
+  const p = prog(t, t0, dur);
+  let o = 0;
+  if (p > 0 && p < 0.16) o = p / 0.16;
+  else if (p >= 0.16 && p <= 0.6) o = 1;
+  else if (p > 0.6 && p < 1) o = 1 - (p - 0.6) / 0.4;
+  el.style.opacity = peak * (o * o * (3 - 2 * o));
+}
+
 /** Draw a leader polyline from its first point. */
 function leaderAt(el, t, t0, dur = 0.24) {
   if (!el._len) { el._len = el.getTotalLength() + 2; el.style.strokeDasharray = `${el._len} ${el._len}`; }
